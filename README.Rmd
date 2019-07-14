@@ -14,15 +14,15 @@ knitr::opts_chunk$set(
 ```
 # unglue
 
-The package *unglue* features functions `unglue()` and `unglue_data()` `unglue()`
-which use a syntax inspired from `glue::glue()` to extract matched substrings
-using a pattern.
+The package *unglue* features functions `unglue()` and `unglue_data()`
+which use a syntax inspired from the functions of Jim Hester's *glue* package
+to extract matched substrings using a pattern.
 
 It wraps `stringr::str_match_all()` and `stringr::str_replace_all()` (doesn't
-depend on glue) and provides in many cases a more readable alternative to
+depend on *glue*) and provides in many cases a more readable alternative to
 regex. Simple cases indeed don't require regex knowledge at all.
 
-Install it with :
+Installation:
 
 ```{r,eval=FALSE}
 remotes::install_github("moodymudskipper/unglue")
@@ -30,7 +30,7 @@ remotes::install_github("moodymudskipper/unglue")
 
 ## Examples
 
-### using an example from ?glue::glue
+### using an example from `?glue::glue`
 
 ```{r}
 library(unglue)
@@ -60,7 +60,7 @@ Note that the second pattern uses some regex, regex needs to be typed after an
 `=` sign, if its has no left hand side then the expression won't be attributed 
 to a variable. in fact the pattern `"{foo}"` is a shorthand for `"{foo=.*?}"`.
 
-`unglue()` is more suitable than unglue_data() in pipe chains:
+`unglue()` is more suitable than `unglue_data()` in pipe chains:
 
 ```{r}
 suppressMessages(library(tidyverse))

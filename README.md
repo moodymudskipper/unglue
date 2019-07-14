@@ -3,11 +3,11 @@
 unglue
 ======
 
-The package *unglue* features functions `unglue()` and `unglue_data()` `unglue()` which use a syntax inspired from `glue::glue()` to extract matched substrings using a pattern.
+The package *unglue* features functions `unglue()` and `unglue_data()` which use a syntax inspired from the functions of Jim Hester's *glue* package to extract matched substrings using a pattern.
 
-It wraps `stringr::str_match_all()` and `stringr::str_replace_all()` (doesn't depend on glue) and provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
+It wraps `stringr::str_match_all()` and `stringr::str_replace_all()` (doesn't depend on *glue*) and provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
 
-Install it with :
+Installation:
 
 ``` r
 remotes::install_github("moodymudskipper/unglue")
@@ -16,7 +16,7 @@ remotes::install_github("moodymudskipper/unglue")
 Examples
 --------
 
-### using an example from ?glue::glue
+### using an example from `?glue::glue`
 
 ``` r
 library(unglue)
@@ -63,7 +63,7 @@ unglue_data(facts, patterns)
 
 Note that the second pattern uses some regex, regex needs to be typed after an `=` sign, if its has no left hand side then the expression won't be attributed to a variable. in fact the pattern `"{foo}"` is a shorthand for `"{foo=.*?}"`.
 
-`unglue()` is more suitable than unglue\_data() in pipe chains:
+`unglue()` is more suitable than `unglue_data()` in pipe chains:
 
 ``` r
 suppressMessages(library(tidyverse))
@@ -90,17 +90,17 @@ facts_df %>%
 #> 5 Green Land      largest     island    the world
 ```
 
-No character needs to be escaped outside of the brackets.
+It's not necessary to escape special characters outside of the curly braces.
 
 ``` r
 sentences <- c("666 is [a number]", "foo is [a word]", "42 is [the answer]", "Area 51 is [unmatched]")
 patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 unglue_data(sentences, patterns)
-#>   number       what word
-#> 1    666   a number <NA>
-#> 2     NA     a word  foo
-#> 3     42 the answer <NA>
-#> 4     NA       <NA> <NA>
+#>    number       what word
+#> 1     666   a number <NA>
+#> 2      NA     a word  foo
+#> 3      42 the answer <NA>
+#> 11     NA       <NA> <NA>
 ```
 
 Types are converted automatically so in the example the column `number` is numeric.
@@ -109,9 +109,18 @@ To switch off the behavior set `convert = FALSE`
 
 ``` r
 unglue_data(sentences, patterns, convert = FALSE)
-#>   number       what word
-#> 1    666   a number <NA>
-#> 2   <NA>     a word  foo
-#> 3     42 the answer <NA>
-#> 4   <NA>       <NA> <NA>
+#>    number       what word
+#> 1     666   a number <NA>
+#> 2    <NA>     a word  foo
+#> 3      42 the answer <NA>
+#> 11   <NA>       <NA> <NA>
 ```
+
+development
+-----------
+
+-   only works now with curly braces, as I was lazy in some parts of the code and coded them in hard.
+-   doubling the curly brace to escape it doesn't work as in glue
+-   curly braces used in the regex make the function crash
+
+So at the time it's not possible tu use patterns such as `"I have {\\d{2}} apples"` and no workaround. Nothing unsolvable though.
