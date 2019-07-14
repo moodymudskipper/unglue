@@ -1,0 +1,15 @@
+Package: unglue
+Title: Extract Matched Substrings Using a Pattern, Similar to what Package glue Does in Reverse
+Version: 0.0.0.9000
+Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
+Description: Extract matched substrings using a pattern, similar to what package glue does in reverse.
+Depends: R (>= 3.6.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    stringr
+Suggests: 
+    glue
+RoxygenNote: 6.1.1
+Roxygen: list(markdown = TRUE)

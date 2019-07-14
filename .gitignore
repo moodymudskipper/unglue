@@ -1,0 +1,5 @@
+.Rproj.user
+exclude/package_builder.R
+exclude
+.Rhistory
+.RData
