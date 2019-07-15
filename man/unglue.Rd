@@ -26,8 +26,7 @@ items will be with a \code{""} separator.}
 1 row data frames.
 }
 \description{
-\code{unglue()} wraps \code{stringr::str_match_all()} and \code{stringr::str_replace_all()}
-to extract matched substrings using a syntax inspired from \code{glue::glue()}.
+\code{unglue()} extracts matched substrings using a syntax inspired from \code{glue::glue()}.
 Simple cases don't require regex knowledge at all.
 }
 \details{

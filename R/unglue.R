@@ -7,7 +7,7 @@ regex_escape <- function(string,n = 1) {
   string
 }
 
-pattern_match <- function(x,patterns, type = "chr"){
+pattern_match <- function(x,patterns){
   # lapply + do.call + cbind guarantee that we get a matrix output
   m <- do.call(cbind,lapply(patterns, grepl, x))
   # get indices of 1st relevant pattern
@@ -20,8 +20,7 @@ pattern_match <- function(x,patterns, type = "chr"){
 
 #' unglue
 #'
-#' `unglue()` wraps `stringr::str_match_all()` and `stringr::str_replace_all()`
-#' to extract matched substrings using a syntax inspired from `glue::glue()`.
+#' `unglue()` extracts matched substrings using a syntax inspired from `glue::glue()`.
 #' Simple cases don't require regex knowledge at all.
 #'
 #' To build the relevant regex pattern special characters will be escaped in the
@@ -88,48 +87,62 @@ unglue <- function(x, patterns, open = "{", close = "}", convert = TRUE){
 unglue_data <- function(
   x, patterns, open = "{", close = "}", convert = TRUE){
   # collapse patterns
-  patterns <- lapply(patterns, paste, collapse = "")
+  patterns <- sapply(patterns, paste, collapse = "")
   # escape variable delimiters
-  open <- regex_escape(open)
-  close <- regex_escape(close)
+  open1 <- regex_escape(open)
+  close1 <- regex_escape(close)
   # extract bracket content
-  bracket_content <- stringr::str_match_all(patterns, paste0(open,"(.*?)",close))
-  bracket_content <- lapply(bracket_content, function(x) x[,2])
-  # extract variable names
-  nms <- lapply(bracket_content, function(x){
+  bracket_pattern <- paste0(open1,"(?>[^",open,close,"]|(?R))*", close1)
+  matched <- gregexpr(bracket_pattern, patterns, perl = T)
+  bracket_content <-
+    Map(function(x,y) substring(x, y+1, y + attr(y, "match.length") - 2),
+           patterns, matched)
+
+  # or regmatches(patterns, matched) but removing first and last
+  L <- lapply(bracket_content, function(x){
     eq <- grepl("=", x)
-    x[eq] <- gsub("^(.*?)\\=.*","\\1", x[eq])
-    x[x!=""]
+    nms <- x
+    nms[eq] <- gsub("^(.*?)\\=.*","\\1", nms[eq])
+    subpat <- rep.int("(.*?)", length(x))
+    subpat[eq & nms !=""] <- gsub("^.*?\\=(.*)","(\\1)", x[eq & nms!=""])
+    subpat[eq & nms ==""] <- gsub("^.*?\\=(.*)",  "\\1", x[eq & nms==""])
+    nms <- nms[nms!=""]
+    list(nms, subpat)
   })
+  nms <- lapply(L, `[[`, 1)
+  subpat <- lapply(L, `[[`, 2)
 
-  # escape delimiters another time
-  open  <- regex_escape(open)
-  close <- regex_escape(close)
-  bracket_pattern <- paste0(open, "(.*?)",close)
-  bracket_to_subppatern <-  function(x) {
-    # unescape
-    x <- gsub("\\\\([][{}()+*^$|\\\\?])", "\\1", x)
-    if(!grepl("=", x)) "(.*?)" else
-      # need to be adapted to other brackets
-      if(grepl("\\{=", x)) gsub("\\{.*?=(.*?)\\}", "\\1", x) else
-        paste0("(", gsub("\\{.*?=(.*?)\\}", "\\1", x), ")")
-  }
+  # to do, try escaping one more level all along, so right after the next line
+  # double occurences can be replaced by simple ones, but careful
+  # that `{{\\{foo\\}}}` has 3 in a row, so the "\\\\" has to be part of the
+  # closing regex for replacement
 
-  patterns_regex <- stringr::str_replace_all(
-    regex_escape(patterns), bracket_pattern, bracket_to_subppatern)
+  # simplify patterns now that we've extracted the relevant content
+  # it changes all "{foo}" to "{}", including cases with nested "{"
+  regmatches(patterns, matched) <- paste0(open,close)
+  open2  <- regex_escape(open1)
+  close2 <- regex_escape(close1)
+  # we escape all the relevant characters in the patterns, which means
+  # contained open and close will be escaped too, so to match them we need to
+  # escape them 2 times
+  patterns_regex <- regex_escape(patterns)
+  matched <- gregexpr(paste0(open2,close2), patterns_regex, perl = T)
+  regmatches(patterns_regex, matched) <- subpat
 
   # complete the pattern with start and end of string
   patterns_regex <- paste0("^",patterns_regex,"$")
   # assign a pattern to each element
-  pattern_indices <- pattern_match(x, patterns_regex , "int")
+  pattern_indices <- pattern_match(x, patterns_regex)
   # initiate a list of results
   res <- as.list(rep.int(NA,length(x)))
   # assign a tibble of matches to each result from each pattern
   for(i in seq_along(patterns)){
-    subset_lgl <- pattern_indices == i
-    subset_lgl <- subset_lgl[!is.na(subset_lgl)]
-    res_i <- stringr::str_match_all(x[subset_lgl], patterns_regex[i])
-    res[subset_lgl] <- lapply(res_i, function(x) as.data.frame(`colnames<-`(x[,-1, drop = FALSE],nms[[i]]),stringsAsFactors = FALSE))
+    subset_ind <- which(pattern_indices == i)
+    matched <- gregexpr(patterns_regex[i], x[subset_ind], perl = T)
+    res_i <- Map(function(x,y) substring(x, attr(y, "capture.start") , attr(y, "capture.start") + attr(y, "capture.length") - 1),
+                     x[subset_ind], matched)
+    res_i <- lapply(res_i, function(x) as.data.frame(setNames(as.list(x), nms[[i]])))
+    res[subset_ind] <- res_i
   }
   # replace NA elements by an empty single row tibble
   na_indices <- is.na(pattern_indices)
@@ -147,4 +160,9 @@ bind_rows2 <- function(x){
   nms <- unique(unlist(sapply(x, names)))
   x[] <- lapply(x,function(x) {x[nms[!nms %in% names(x)]] <- NA; x})
   do.call(rbind,x)
+}
+
+setNames <-function (object = nm, nm) {
+  names(object) <- nm
+  object
 }

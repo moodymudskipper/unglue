@@ -85,6 +85,7 @@ To switch off the behavior set `convert = FALSE`
 unglue_data(sentences, patterns, convert = FALSE)
 ```
 
+
 ## development
 
 * only works now with curly braces, as I was lazy in some parts of the code and
