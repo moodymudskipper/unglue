@@ -31,7 +31,7 @@ glued_data
 #> Hornet Sportabout has 175 hp
 #> Valiant has 105 hp
 unglue_data(glued_data, "{rownames(.)} has {hp} hp")
-#>         rownames(.)  hp
+#>         rownames...  hp
 #> 1         Mazda RX4 110
 #> 2     Mazda RX4 Wag 110
 #> 3        Datsun 710  93
@@ -119,8 +119,4 @@ unglue_data(sentences, patterns, convert = FALSE)
 development
 -----------
 
--   only works now with curly braces, as I was lazy in some parts of the code and coded them in hard.
--   doubling the curly brace to escape it doesn't work as in glue
--   curly braces used in the regex make the function crash
-
-So at the time it's not possible tu use patterns such as `"I have {\\d{2}} apples"` and no workaround. Nothing unsolvable though.
+-   doubling the curly brace to escape it in the pattern doesn't work as in glue
