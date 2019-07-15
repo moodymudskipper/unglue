@@ -3,11 +3,14 @@
 unglue
 ======
 
-The package *unglue* features functions `unglue()` and `unglue_data()` which use a syntax inspired from the functions of Jim Hester's *glue* package to extract matched substrings using a pattern.
+The package *unglue* features functions `unglue()`, `unglue_data()` and `unglue_unnest` which provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
 
-It wraps `stringr::str_match_all()` and `stringr::str_replace_all()` (doesn't depend on *glue*) and provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
+It uses a syntax inspired from the functions of Jim Hester's *glue* package to extract matched substrings using a pattern, but is not endorsed by the authors of *glue* nor *tidyverse* packages.
+
+It is completely dependence free.
 
 Installation:
+-------------
 
 ``` r
 remotes::install_github("moodymudskipper/unglue")
@@ -16,7 +19,7 @@ remotes::install_github("moodymudskipper/unglue")
 Examples
 --------
 
-### using an example from `?glue::glue`
+### using an example from `?glue::glue` backwards
 
 ``` r
 library(unglue)
@@ -63,6 +66,8 @@ unglue_data(facts, patterns)
 
 Note that the second pattern uses some regex, regex needs to be typed after an `=` sign, if its has no left hand side then the expression won't be attributed to a variable. in fact the pattern `"{foo}"` is a shorthand for `"{foo=.*?}"`.
 
+### usage in tidyverse code
+
 `unglue()` is more suitable than `unglue_data()` in pipe chains:
 
 ``` r
@@ -90,18 +95,53 @@ facts_df %>%
 #> 5 Green Land      largest     island    the world
 ```
 
-It's not necessary to escape special characters outside of the curly braces.
+However it is often moreconvenient to use `unglue_unnest()` which is very similar but more compact and dependence free :
+
+``` r
+unglue_unnest(facts_df, facts, patterns)
+#>   id
+#> 1  1
+#> 2  2
+#> 3  3
+#> 4  4
+#> 5  5
+#>                                                                     facts
+#> 1                          Antarctica is the largest desert in the world!
+#> 2                                The largest country in Europe is Russia!
+#> 3                              The smallest country in Europe is Vatican!
+#> 4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
+#> 5                          The largest island in the world is Green Land!
+#>        place    adjective place_type bigger_place
+#> 1 Antarctica      largest     desert    the world
+#> 2     Russia      largest    country       Europe
+#> 3    Vatican     smallest    country       Europe
+#> 4 Disneyland most visited      place       Europe
+#> 5 Green Land      largest     island    the world
+unglue_unnest(facts_df, facts, patterns, keep = FALSE)
+#>   id      place    adjective place_type bigger_place
+#> 1  1 Antarctica      largest     desert    the world
+#> 2  2     Russia      largest    country       Europe
+#> 3  3    Vatican     smallest    country       Europe
+#> 4  4 Disneyland most visited      place       Europe
+#> 5  5 Green Land      largest     island    the world
+```
+
+### escaping characters
+
+Special characters outside of the curly braces should not be escaped.
 
 ``` r
 sentences <- c("666 is [a number]", "foo is [a word]", "42 is [the answer]", "Area 51 is [unmatched]")
 patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 unglue_data(sentences, patterns)
-#>    number       what word
-#> 1     666   a number <NA>
-#> 2      NA     a word  foo
-#> 3      42 the answer <NA>
-#> 11     NA       <NA> <NA>
+#>   number       what word
+#> 1    666   a number <NA>
+#> 2     NA     a word  foo
+#> 3     42 the answer <NA>
+#> 4     NA       <NA> <NA>
 ```
+
+### type conversion
 
 Types are converted automatically so in the example the column `number` is numeric.
 
@@ -109,9 +149,9 @@ To switch off the behavior set `convert = FALSE`
 
 ``` r
 unglue_data(sentences, patterns, convert = FALSE)
-#>    number       what word
-#> 1     666   a number <NA>
-#> 2    <NA>     a word  foo
-#> 3      42 the answer <NA>
-#> 11   <NA>       <NA> <NA>
+#>   number       what word
+#> 1    666   a number <NA>
+#> 2   <NA>     a word  foo
+#> 3     42 the answer <NA>
+#> 4   <NA>       <NA> <NA>
 ```

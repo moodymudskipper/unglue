@@ -26,10 +26,13 @@ items will be with a \code{""} separator.}
 1 row data frames.
 }
 \description{
-\code{unglue()} extracts matched substrings using a syntax inspired from \code{glue::glue()}.
-Simple cases don't require regex knowledge at all.
+\code{unglue()} extracts matched substrings using a syntax inspired from \code{glue::glue()}
+into a list of data frames. \code{unglue_data()} returns a data frame from a vector,
+just as \code{glue::glue_data()} starts from a data frame to return a vector.
 }
 \details{
+Simple cases don't require regex knowledge at all.
+
 To build the relevant regex pattern special characters will be escaped in the
 input pattern and the subpatterns will be replaced with \code{(.*?)} if in standard
 \code{"{foo}"} form. An alternate regular expression can be provided after \code{=} so that
@@ -64,11 +67,17 @@ library(tidyverse)
 facts_df \%>\%
   mutate(unglued = unglue(facts, patterns)) \%>\%
   unnest()
+# though in these cases it can be more convenient to use the more compact
+# and dependence free `unglue_unnest`
 }
+
 sentences <- c("666 is [a number]", "foo is [a word]",
               "42 is [the answer]", "Area 51 is [unmatched]")
 patterns <- c("{number=\\\\d+} is [{what}]", "{word=\\\\D+} is [{what}]")
 unglue_data(sentences, patterns)
 
 
+}
+\seealso{
+unglue_unnest
 }

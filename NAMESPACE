@@ -2,3 +2,4 @@
 
 export(unglue)
 export(unglue_data)
+export(unglue_unnest)

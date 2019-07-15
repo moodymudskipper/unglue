@@ -14,15 +14,17 @@ knitr::opts_chunk$set(
 ```
 # unglue
 
-The package *unglue* features functions `unglue()` and `unglue_data()`
-which use a syntax inspired from the functions of Jim Hester's *glue* package
-to extract matched substrings using a pattern.
-
-It wraps `stringr::str_match_all()` and `stringr::str_replace_all()` (doesn't
-depend on *glue*) and provides in many cases a more readable alternative to
+The package *unglue* features functions `unglue()`, `unglue_data()` and
+`unglue_unnest` which provides in many cases a more readable alternative to
 regex. Simple cases indeed don't require regex knowledge at all.
 
-Installation:
+It uses a syntax inspired from the functions of Jim Hester's *glue* package to 
+extract matched substrings using a pattern, but is not endorsed by the authors 
+of *glue* nor *tidyverse* packages.
+
+It is completely dependence free.
+
+## Installation:
 
 ```{r,eval=FALSE}
 remotes::install_github("moodymudskipper/unglue")
@@ -30,7 +32,7 @@ remotes::install_github("moodymudskipper/unglue")
 
 ## Examples
 
-### using an example from `?glue::glue`
+### using an example from `?glue::glue` backwards
 
 ```{r}
 library(unglue)
@@ -60,6 +62,8 @@ Note that the second pattern uses some regex, regex needs to be typed after an
 `=` sign, if its has no left hand side then the expression won't be attributed 
 to a variable. in fact the pattern `"{foo}"` is a shorthand for `"{foo=.*?}"`.
 
+### usage in tidyverse code
+
 `unglue()` is more suitable than `unglue_data()` in pipe chains:
 
 ```{r}
@@ -69,13 +73,25 @@ facts_df %>%
   unnest()
 ```
 
-It's not necessary to escape special characters outside of the curly braces.
+However it is often moreconvenient to use `unglue_unnest()` which is very similar
+but more compact and dependence free :
+
+```{r}
+unglue_unnest(facts_df, facts, patterns)
+unglue_unnest(facts_df, facts, patterns, keep = FALSE)
+```
+
+### escaping characters
+
+Special characters outside of the curly braces should not be escaped.
 
 ```{r}
 sentences <- c("666 is [a number]", "foo is [a word]", "42 is [the answer]", "Area 51 is [unmatched]")
 patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 unglue_data(sentences, patterns)
 ```
+
+### type conversion
 
 Types are converted automatically so in the example the column `number` is numeric.
 

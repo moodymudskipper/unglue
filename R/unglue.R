@@ -20,7 +20,10 @@ pattern_match <- function(x,patterns){
 
 #' unglue
 #'
-#' `unglue()` extracts matched substrings using a syntax inspired from `glue::glue()`.
+#' `unglue()` extracts matched substrings using a syntax inspired from `glue::glue()`
+#' into a list of data frames. `unglue_data()` returns a data frame from a vector,
+#' just as `glue::glue_data()` starts from a data frame to return a vector.
+#'
 #' Simple cases don't require regex knowledge at all.
 #'
 #' To build the relevant regex pattern special characters will be escaped in the
@@ -40,6 +43,7 @@ pattern_match <- function(x,patterns){
 #'
 #' @return `unglue_data()` returns a data frame, `unglue()` returns a list of
 #' 1 row data frames.
+#' @seealso unglue_unnest
 #' @export
 #'
 #' @examples
@@ -68,7 +72,10 @@ pattern_match <- function(x,patterns){
 #' facts_df %>%
 #'   mutate(unglued = unglue(facts, patterns)) %>%
 #'   unnest()
+#' # though in these cases it can be more convenient to use the more compact
+#' # and dependence free `unglue_unnest`
 #' }
+#'
 #' sentences <- c("666 is [a number]", "foo is [a word]",
 #'               "42 is [the answer]", "Area 51 is [unmatched]")
 #' patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
@@ -86,6 +93,10 @@ unglue <- function(x, patterns, open = "{", close = "}", convert = TRUE){
 #' @export
 unglue_data <- function(
   x, patterns, open = "{", close = "}", convert = TRUE){
+  if(!isTRUE(all(nchar(c(open, close)) == 1)))
+    stop("open and close must be a single character")
+  if(open == close)
+    stop("open and close can't be the same character")
   # collapse patterns
   patterns <- sapply(patterns, paste, collapse = "")
   # escape variable delimiters
@@ -141,7 +152,7 @@ unglue_data <- function(
     matched <- gregexpr(patterns_regex[i], x[subset_ind], perl = T)
     res_i <- Map(function(x,y) substring(x, attr(y, "capture.start") , attr(y, "capture.start") + attr(y, "capture.length") - 1),
                      x[subset_ind], matched)
-    res_i <- lapply(res_i, function(x) as.data.frame(setNames(as.list(x), nms[[i]])))
+    res_i <- lapply(res_i, function(x) as.data.frame(setNames(as.list(x), nms[[i]]), stringsAsFactors = FALSE))
     res[subset_ind] <- res_i
   }
   # replace NA elements by an empty single row tibble
@@ -149,8 +160,9 @@ unglue_data <- function(
   res[na_indices] <- replicate(sum(na_indices), data.frame(row.names = 1))
   # bind everything
   res <- bind_rows2(res)
+  rownames(res) <- NULL
   # convert if relevant
-  if (convert) res <- utils::type.convert(res)
+  if (convert) res <- utils::type.convert(res, as.is = TRUE)
   res
 }
 
@@ -165,4 +177,44 @@ bind_rows2 <- function(x){
 setNames <-function (object = nm, nm) {
   names(object) <- nm
   object
+}
+
+
+#' unglue a column and unnest it
+#'
+#' `unglue_unnest()` extracts variables as new columns of the input data frame.
+#'
+#'  `unnest(data, var, patterns)` is similar to
+#'  `dplyr::mutate(data, unglued = unglue(var, patterns)) %>% tidyr::unnest()`
+#'  using tidyverse packages but is more compact and dependence free
+#'
+#' @inheritParams unglue
+#' @param data a data frame
+#' @param var the unquoted name of the column to unglue and unnest
+#' @param keep wether to keep the original text column
+#'
+#' @return a data frame with the same attributes as the input (apart from names)
+#' @seealso unglue, unglue_data
+#' @export
+#' @examples
+#' facts <- c("Antarctica is the largest desert in the world!",
+#'   "The largest country in Europe is Russia!",
+#'   "The smallest country in Europe is Vatican!",
+#'   "Disneyland is the most visited place in Europe! Disneyland is in Paris!",
+#'   "The largest island in the world is Green Land!")
+#' facts_df <- data.frame(id = 1:5, facts)
+#' patterns <- c("The {adjective} {place_type} in {bigger_place} is {place}!",
+#'             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
+#' unglue_unnest(facts_df, facts, patterns)
+#' unglue_unnest(facts_df, facts, patterns, keep = FALSE)
+unglue_unnest <- function(data, var, patterns, open = "{", close = "}", convert = TRUE, keep = TRUE){
+  attr_bkp <- attributes(data)
+  attr_bkp$names <- NULL
+  var <- deparse(substitute(var))
+  ud  <- unglue_data(data[[var]], patterns, open = open, close = close, convert = convert)
+  if(!keep) data[[var]] <- NULL
+  res <- cbind(data, ud)
+  names(res) <- make.unique(names(res))
+  attributes(res) <- c(attr_bkp, list(names = names(res)))
+  res
 }
