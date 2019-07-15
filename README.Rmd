@@ -84,8 +84,3 @@ To switch off the behavior set `convert = FALSE`
 ```{r}
 unglue_data(sentences, patterns, convert = FALSE)
 ```
-
-
-## development
-
-* doubling the curly brace to escape it in the pattern doesn't work as in glue

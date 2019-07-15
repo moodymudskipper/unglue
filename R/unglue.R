@@ -112,16 +112,16 @@ unglue_data <- function(
   nms <- lapply(L, `[[`, 1)
   subpat <- lapply(L, `[[`, 2)
 
-  # to do, try escaping one more level all along, so right after the next line
-  # double occurences can be replaced by simple ones, but careful
-  # that `{{\\{foo\\}}}` has 3 in a row, so the "\\\\" has to be part of the
-  # closing regex for replacement
-
   # simplify patterns now that we've extracted the relevant content
-  # it changes all "{foo}" to "{}", including cases with nested "{"
-  regmatches(patterns, matched) <- paste0(open,close)
-  open2  <- regex_escape(open1)
-  close2 <- regex_escape(close1)
+  # it changes all "{foo}" to "\\{\\}", including cases with nested "{"
+
+  regmatches(patterns, matched) <- paste0(open1,close1)
+  # escaping is necessary to make the following replacements and have an unambiguous pattern
+  patterns <- gsub(strrep(open1,2),open, patterns)
+  patterns <- gsub(strrep(close1,2),close, patterns)
+  open2  <- regex_escape(open1,2)
+  close2 <- regex_escape(close1,2)
+
   # we escape all the relevant characters in the patterns, which means
   # contained open and close will be escaped too, so to match them we need to
   # escape them 2 times

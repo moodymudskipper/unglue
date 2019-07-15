@@ -115,8 +115,3 @@ unglue_data(sentences, patterns, convert = FALSE)
 #> 3      42 the answer <NA>
 #> 11   <NA>       <NA> <NA>
 ```
-
-development
------------
-
--   doubling the curly brace to escape it in the pattern doesn't work as in glue
