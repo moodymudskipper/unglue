@@ -3,7 +3,7 @@
 unglue
 ======
 
-The package *unglue* features functions `unglue()`, `unglue_data()` and `unglue_unnest()` which provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
+The package *unglue* features functions `unglue()`, `unglue_data()` and `unglue_unnest()` which provide in many cases a more readable alternative to base regex functions. Simple cases indeed don't require regex knowledge at all.
 
 It uses a syntax inspired from the functions of Jim Hester's *glue* package to extract matched substrings using a pattern, but is not endorsed by the authors of *glue* nor *tidyverse* packages.
 
