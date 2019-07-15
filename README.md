@@ -3,11 +3,11 @@
 unglue
 ======
 
-The package *unglue* features functions `unglue()`, `unglue_data()` and `unglue_unnest` which provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
+The package *unglue* features functions `unglue()`, `unglue_data()` and `unglue_unnest()` which provides in many cases a more readable alternative to regex. Simple cases indeed don't require regex knowledge at all.
 
 It uses a syntax inspired from the functions of Jim Hester's *glue* package to extract matched substrings using a pattern, but is not endorsed by the authors of *glue* nor *tidyverse* packages.
 
-It is completely dependence free.
+It is completely dependency free.
 
 Installation:
 -------------
@@ -95,7 +95,7 @@ facts_df %>%
 #> 5 Green Land      largest     island    the world
 ```
 
-However it is often moreconvenient to use `unglue_unnest()` which is very similar but more compact and dependence free :
+However it is often moreconvenient to use `unglue_unnest()` which is very similar but more compact and doesn't require any additional package :
 
 ``` r
 unglue_unnest(facts_df, facts, patterns)
@@ -143,7 +143,7 @@ unglue_data(sentences, patterns)
 
 ### type conversion
 
-Types are converted automatically so in the example the column `number` is numeric.
+Types are converted automatically so in the example above the column `number` is numeric.
 
 To switch off the behavior set `convert = FALSE`
 
