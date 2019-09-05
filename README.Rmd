@@ -38,6 +38,7 @@ remotes::install_github("moodymudskipper/unglue")
 library(unglue)
 library(glue)
 library(magrittr)
+library(utils)
 glued_data <- head(mtcars) %>% glue_data("{rownames(.)} has {hp} hp")
 glued_data
 unglue_data(glued_data, "{rownames(.)} has {hp} hp")
@@ -101,3 +102,5 @@ To switch off the behavior set `convert = FALSE`
 ```{r}
 unglue_data(sentences, patterns, convert = FALSE)
 ```
+
+
