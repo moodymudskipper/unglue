@@ -2,4 +2,6 @@
 
 export(unglue)
 export(unglue_data)
+export(unglue_to_regex)
 export(unglue_unnest)
+export(unglue_vec)
