@@ -132,7 +132,8 @@ parse_bracket <- function(x, multiple, named_capture = FALSE){
 
     subpat[dupes_lgl] <- ""
     n_unescaped_parens <- nchar(gsub("[^(]|\\\\\\(", "", subpat))
-    group_indices <- head(cumsum(c(1,n_unescaped_parens)),-1)
+    group_indices <- cumsum(c(1,n_unescaped_parens))
+    group_indices <- group_indices[-length(group_indices)]
     for (dupe in unique(nms[dupes_lgl])){
       i_first <- which.max(nms == dupe)
       i_dupes <- setdiff(which(nms == dupe), i_first)
@@ -146,7 +147,8 @@ parse_bracket <- function(x, multiple, named_capture = FALSE){
     group_indices <- group_indices[!dupes_lgl & !empty_nms_lgl]
   } else {
     n_unescaped_parens <- nchar(gsub("[^(]|\\\\\\(", "", subpat))
-    group_indices <- head(cumsum(c(1,n_unescaped_parens)),-1)
+    group_indices <- cumsum(c(1,n_unescaped_parens))
+    group_indices <- group_indices[-length(group_indices)]
     group_indices <- group_indices[!empty_nms_lgl]
   }
 
