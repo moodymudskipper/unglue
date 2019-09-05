@@ -3,43 +3,94 @@
 \name{unglue}
 \alias{unglue}
 \alias{unglue_data}
+\alias{unglue_vec}
+\alias{unglue_to_regex}
+\alias{unglue_unnest}
 \title{unglue}
 \usage{
-unglue(x, patterns, open = "{", close = "}", convert = TRUE)
+unglue(x, patterns, open = "{", close = "}", convert = FALSE,
+  multiple = NULL)
 
-unglue_data(x, patterns, open = "{", close = "}", convert = TRUE)
+unglue_data(x, patterns, open = "{", close = "}", convert = FALSE,
+  multiple = NULL)
+
+unglue_vec(x, patterns, var = 1, open = "{", close = "}",
+  convert = FALSE, multiple = NULL)
+
+unglue_to_regex(patterns, open = "{", close = "}", multiple = NULL,
+  named_capture = FALSE, attributes = FALSE)
+
+unglue_unnest(data, col, patterns, open = "{", close = "}",
+  remove = TRUE, convert = FALSE)
 }
 \arguments{
-\item{x}{a character vector to unglue}
+\item{x}{a character vector to unglue.}
 
 \item{patterns}{a character vector or a list of character vectors, if a list,
-items will be with a \code{""} separator.}
+items will be pasted using an empty separator (\code{""}).}
 
 \item{open}{The opening delimiter.}
 
 \item{close}{The closing delimiter.}
 
-\item{convert}{convert columns of output using \code{utils::type.convert()}}
-}
-\value{
-\code{unglue_data()} returns a data frame, \code{unglue()} returns a list of
-1 row data frames.
+\item{convert}{If \code{TRUE}, will convert columns of output using
+\code{utils::type.convert()} with parameter \code{as.is = TRUE}, alternatively, can
+be a converting function, such as \code{readr::type_convert}. Formula notation
+is supported if the package \code{rlang} is installed, so things like
+\code{convert = ~type_convert(., numerals = "warn.loss")} are possible.}
+
+\item{multiple}{The aggregation function to use if several subpatterns are
+named the same, by default no function is used and subpatterns named the
+same will match the same value. If a function is provided it will be fed
+the conflicting values as separate arguments. Formula notation
+is supported if the package \code{rlang} is installed.}
+
+\item{var}{the numeric index or the name of the subpattern to extract from}
+
+\item{named_capture}{wether to incorporate the names of the groups in the
+ouput regex}
+
+\item{attributes}{wether to give group attributes to the output}
+
+\item{data}{a data frame.}
+
+\item{col}{column containing the character vector to extract values from.}
+
+\item{remove}{wether to remove the column \code{col} once extraction is performed}
 }
 \description{
-\code{unglue()} extracts matched substrings using a syntax inspired from \code{glue::glue()}
-into a list of data frames. \code{unglue_data()} returns a data frame from a vector,
-just as \code{glue::glue_data()} starts from a data frame to return a vector.
+The functions from the package \emph{unglue} extract matched substrings using a
+syntax inspired from \code{glue::glue()}.
+Simple cases don't require regex knowledge at all.
 }
 \details{
-Simple cases don't require regex knowledge at all.
+Depending on the task you might want:
+\itemize{
+\item \code{unglue_data()} to return a data frame from a character vector,
+just as \code{glue::glue_data()} does in reverse
+\item \code{unglue()} to return a list of data frames containing the matches
+\item \code{unglue_vec()} to extract one value by element of \code{x}, chosen by indice or by
+name.
+\item \code{unglue_unnest()} to extract value from a column of a data frame to new columns
+\item \code{unglue_to_regex()} to transform a vector of patterns given in the unglue
+format to a vector of proper  regex (PCRE) patterns (so they can for instance
+be used with functions from other packages).
+}
 
 To build the relevant regex pattern special characters will be escaped in the
 input pattern and the subpatterns will be replaced with \code{(.*?)} if in standard
 \code{"{foo}"} form. An alternate regular expression can be provided after \code{=} so that
-\code{"{foo=\\d}} will be translated into \code{"(\\d)"}.
+\code{"{foo=\\d}"} will be translated into \code{"(\\d)"}.
 
 Sometimes we might want to use regex to match a part of the text that won't
-be extracted, in these cases we just need to omit the name as in \code{"{=\\d}}.
+be extracted, in these cases we just need to omit the name as in \code{"{=\\d}"}.
+
+\code{unglue_unnest()}'s name is a tribute to \code{tidyr::unnest()} because
+\code{unglue_unnest(data, col, patterns)} returns a similar output as
+\code{dplyr::mutate(data, unglued = unglue(col, patterns)) \%>\% tidyr::unnest()}
+(without requiring any extra package).
+It is also very close to \code{tidyr::extract()} and efforts were made to make
+the syntax consistent with the latter.
 }
 \examples{
 # using an awample from ?glue::glue
@@ -61,23 +112,11 @@ patterns <- c("The {adjective} {place_type} in {bigger_place} is {place}!",
             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
 unglue_data(facts, patterns)
 
-\dontrun{
-# unglue() is more suitable than unglue_data() in pipe chains:
-library(tidyverse)
-facts_df \%>\%
-  mutate(unglued = unglue(facts, patterns)) \%>\%
-  unnest()
-# though in these cases it can be more convenient to use the more compact
-# and dependence free `unglue_unnest`
-}
-
 sentences <- c("666 is [a number]", "foo is [a word]",
               "42 is [the answer]", "Area 51 is [unmatched]")
 patterns <- c("{number=\\\\d+} is [{what}]", "{word=\\\\D+} is [{what}]")
 unglue_data(sentences, patterns)
 
-
-}
-\seealso{
-unglue_unnest
+unglue_unnest(facts_df, facts, patterns)
+unglue_unnest(facts_df, facts, patterns, remove = FALSE)
 }
