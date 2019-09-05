@@ -1,49 +1,58 @@
-
-# escape all characters that need escaping
-regex_escape <- function(string,n = 1) {
-  for(i in seq_len(n)){
-    string <- gsub("([][{}()+*^$|\\\\?])", "\\\\\\1", string)
-  }
-  string
-}
-
-pattern_match <- function(x,patterns){
-  # lapply + do.call + cbind guarantee that we get a matrix output
-  m <- do.call(cbind,lapply(patterns, grepl, x))
-  # get indices of 1st relevant pattern
-  i <- apply(m, 1, which.max)
-  # but which.max returns 1 something on a vector of FALSE so need to adjust
-  i[!rowSums(m)] <- NA
-  # return pattern indices
-  i
-}
-
 #' unglue
 #'
-#' `unglue()` extracts matched substrings using a syntax inspired from `glue::glue()`
-#' into a list of data frames. `unglue_data()` returns a data frame from a vector,
-#' just as `glue::glue_data()` starts from a data frame to return a vector.
-#'
+#' The functions from the package *unglue* extract matched substrings using a
+#' syntax inspired from `glue::glue()`.
 #' Simple cases don't require regex knowledge at all.
+#'
+#' Depending on the task you might want:
+#' * `unglue_data()` to return a data frame from a character vector,
+#'   just as `glue::glue_data()` does in reverse
+#' * `unglue()` to return a list of data frames containing the matches
+#' * `unglue_vec()` to extract one value by element of `x`, chosen by indice or by
+#'   name.
+#' * `unglue_unnest()` to extract value from a column of a data frame to new columns
+#' * `unglue_to_regex()` to transform a vector of patterns given in the unglue
+#'   format to a vector of proper  regex (PCRE) patterns (so they can for instance
+#'   be used with functions from other packages).
 #'
 #' To build the relevant regex pattern special characters will be escaped in the
 #' input pattern and the subpatterns will be replaced with `(.*?)` if in standard
 #' `"{foo}"` form. An alternate regular expression can be provided after `=` so that
-#' `"{foo=\\d}` will be translated into `"(\\d)"`.
+#' `"{foo=\\d}"` will be translated into `"(\\d)"`.
 #'
 #' Sometimes we might want to use regex to match a part of the text that won't
-#' be extracted, in these cases we just need to omit the name as in `"{=\\d}`.
+#' be extracted, in these cases we just need to omit the name as in `"{=\\d}"`.
 #'
-#' @param x a character vector to unglue
+#' `unglue_unnest()`'s name is a tribute to `tidyr::unnest()` because
+#'  `unglue_unnest(data, col, patterns)` returns a similar output as
+#'  `dplyr::mutate(data, unglued = unglue(col, patterns)) %>% tidyr::unnest()`
+#'  (without requiring any extra package).
+#'  It is also very close to `tidyr::extract()` and efforts were made to make
+#'  the syntax consistent with the latter.
+#'
+#' @param x a character vector to unglue.
+#' @param data a data frame.
 #' @param patterns a character vector or a list of character vectors, if a list,
-#'   items will be with a `""` separator.
+#'   items will be pasted using an empty separator (`""`).
 #' @param open The opening delimiter.
 #' @param close The closing delimiter.
-#' @param convert convert columns of output using `utils::type.convert()`
+#' @param convert If `TRUE`, will convert columns of output using
+#'   `utils::type.convert()` with parameter `as.is = TRUE`, alternatively, can
+#'   be a converting function, such as `readr::type_convert`. Formula notation
+#'   is supported if the package `rlang` is installed, so things like
+#'   `convert = ~type_convert(., numerals = "warn.loss")` are possible.
+#' @param multiple The aggregation function to use if several subpatterns are
+#'   named the same, by default no function is used and subpatterns named the
+#'   same will match the same value. If a function is provided it will be fed
+#'   the conflicting values as separate arguments. Formula notation
+#'   is supported if the package `rlang` is installed.
+#' @param col column containing the character vector to extract values from.
+#' @param remove wether to remove the column `col` once extraction is performed
+#' @param var the numeric index or the name of the subpattern to extract from
+#' @param named_capture wether to incorporate the names of the groups in the
+#'   ouput regex
+#' @param attributes wether to give group attributes to the output
 #'
-#' @return `unglue_data()` returns a data frame, `unglue()` returns a list of
-#' 1 row data frames.
-#' @seealso unglue_unnest
 #' @export
 #'
 #' @examples
@@ -66,155 +75,123 @@ pattern_match <- function(x,patterns){
 #'             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
 #' unglue_data(facts, patterns)
 #'
-#'\dontrun{
-#' # unglue() is more suitable than unglue_data() in pipe chains:
-#' library(tidyverse)
-#' facts_df %>%
-#'   mutate(unglued = unglue(facts, patterns)) %>%
-#'   unnest()
-#' # though in these cases it can be more convenient to use the more compact
-#' # and dependence free `unglue_unnest`
-#' }
-#'
 #' sentences <- c("666 is [a number]", "foo is [a word]",
 #'               "42 is [the answer]", "Area 51 is [unmatched]")
 #' patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 #' unglue_data(sentences, patterns)
 #'
-#'
-unglue <- function(x, patterns, open = "{", close = "}", convert = TRUE){
-  # going through unglue_data is a way to have identical names for all items
-  # and to apply convert
-  ud <- unglue_data(x, patterns, open = open, close = close, convert = convert)
-  split(ud, seq_len(nrow(ud)))
+#' unglue_unnest(facts_df, facts, patterns)
+#' unglue_unnest(facts_df, facts, patterns, remove = FALSE)
+unglue  <- function(
+  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  patterns_regex <- unglue_to_regex(
+    patterns, open = open, close = close, multiple = multiple,
+    named_capture = FALSE, attributes = TRUE)
+  unglue_data0(x, patterns_regex, convert, multiple, output = "list")
 }
 
 #' @rdname unglue
 #' @export
-unglue_data <- function(
-  x, patterns, open = "{", close = "}", convert = TRUE){
+#'
+unglue_data  <- function(
+  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  patterns_regex <- unglue_to_regex(
+    patterns, open = open, close = close, multiple = multiple,
+    named_capture = FALSE, attributes = TRUE)
+  unglue_data0(x, patterns_regex, convert, multiple, output = "data.frame")
+}
+
+#' @rdname unglue
+#' @export
+unglue_vec  <- function(
+  x, patterns, var = 1, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  patterns_regex <- unglue_to_regex(
+    patterns, open = open, close = close, multiple = multiple,
+    named_capture = FALSE, attributes = TRUE)
+  if((!is.character(var) && !is.numeric(var)) || length(var) != 1){
+    stop("var should be a character or numeric of length 1")
+  }
+  unglue_vec0(x, patterns_regex, var, convert = convert)
+}
+
+#' @rdname unglue
+#' @export
+unglue_to_regex <- function(
+  patterns, open = "{", close = "}", multiple = NULL,
+  named_capture = FALSE, attributes = FALSE){
+  if(!is.null(multiple) && named_capture){
+    stop("named_capture can be TRUE only when used with default multiple = NULL")
+  }
   if(!isTRUE(all(nchar(c(open, close)) == 1)))
     stop("open and close must be a single character")
   if(open == close)
     stop("open and close can't be the same character")
-  # collapse patterns
+  # collapse patterns into list of strings (or single string)
   patterns <- sapply(patterns, paste, collapse = "")
   # escape variable delimiters
   open1 <- regex_escape(open)
   close1 <- regex_escape(close)
-  # extract bracket content
+  # define pattern which will help extract the content of our brackets
   bracket_pattern <- paste0(open1,"(?>[^",open,close,"]|(?R))*", close1)
-  matched <- gregexpr(bracket_pattern, patterns, perl = T)
-  bracket_content <-
-    Map(function(x,y) substring(x, y+1, y + attr(y, "match.length") - 2),
-           patterns, matched)
+  # matched will be a list containing for each pattern
+  # the starting position of matches (in a vector) and the matches length (as attributes)
+  matched <- gregexpr(bracket_pattern, patterns, perl = TRUE)
+  # extract from patterns : subpatterns, names and group indices
+  L <- parse_brackets(patterns, matched, multiple, named_capture = named_capture)
+  subpat <- lapply(L, `[[`, "subpatterns")
 
-  # or regmatches(patterns, matched) but removing first and last
-  L <- lapply(bracket_content, function(x){
-    eq <- grepl("=", x)
-    nms <- x
-    nms[eq] <- gsub("^(.*?)\\=.*","\\1", nms[eq])
-    subpat <- rep.int("(.*?)", length(x))
-    subpat[eq & nms !=""] <- gsub("^.*?\\=(.*)","(\\1)", x[eq & nms!=""])
-    subpat[eq & nms ==""] <- gsub("^.*?\\=(.*)",  "\\1", x[eq & nms==""])
-    nms <- nms[nms!=""]
-    list(nms, subpat)
-  })
-  nms <- lapply(L, `[[`, 1)
-  subpat <- lapply(L, `[[`, 2)
+  patterns_regex <- patterns
+  # clean up patterns now that we've extracted the relevant content
+  # it changes all "{...}" to "\\{\\}" placeholders, including cases with nested "{"
+  regmatches(patterns_regex, matched) <- paste0(open1,close1)
 
-  # simplify patterns now that we've extracted the relevant content
-  # it changes all "{foo}" to "\\{\\}", including cases with nested "{"
+  # escape double delimiters to consider them as one, the actual delimiters have
+  # been escaped through previous step so are safe
+  patterns_regex <- gsub(strrep(open1,2) ,open, patterns_regex)
+  patterns_regex <- gsub(strrep(close1,2),close, patterns_regex)
 
-  regmatches(patterns, matched) <- paste0(open1,close1)
-  # escaping is necessary to make the following replacements and have an unambiguous pattern
-  patterns <- gsub(strrep(open1,2),open, patterns)
-  patterns <- gsub(strrep(close1,2),close, patterns)
+  # To build our full regex pattern we need to escape all the relevant characters
+  # in the patterns, which means contained open and close will be escaped too,
+  # so to match them we need to escape them 2 further times
   open2  <- regex_escape(open1,2)
   close2 <- regex_escape(close1,2)
-
-  # we escape all the relevant characters in the patterns, which means
-  # contained open and close will be escaped too, so to match them we need to
-  # escape them 2 times
-  patterns_regex <- regex_escape(patterns)
+  patterns_regex <- regex_escape(patterns_regex)
+  # matched will be a list containing for each pattern
+  # the starting position of matches (in a vector) and the matches length (as attributes)
   matched <- gregexpr(paste0(open2,close2), patterns_regex, perl = T)
-  regmatches(patterns_regex, matched) <- subpat
 
+  # replace the placeholder with the actual regex
+  regmatches(patterns_regex, matched) <- subpat
   # complete the pattern with start and end of string
   patterns_regex <- paste0("^",patterns_regex,"$")
-  # assign a pattern to each element
-  pattern_indices <- pattern_match(x, patterns_regex)
-  # initiate a list of results
-  res <- as.list(rep.int(NA,length(x)))
-  # assign a tibble of matches to each result from each pattern
-  for(i in seq_along(patterns)){
-    subset_ind <- which(pattern_indices == i)
-    matched <- gregexpr(patterns_regex[i], x[subset_ind], perl = T)
-    res_i <- Map(function(x,y) substring(x, attr(y, "capture.start") , attr(y, "capture.start") + attr(y, "capture.length") - 1),
-                     x[subset_ind], matched)
-    res_i <- lapply(res_i, function(x) as.data.frame(setNames(as.list(x), nms[[i]]), stringsAsFactors = FALSE))
-    res[subset_ind] <- res_i
+
+  patterns_regex <- setNames(patterns_regex, patterns)
+  if(named_capture) return(patterns_regex)
+  if(attributes) {
+    attr(patterns_regex, "groups") <-
+      lapply(L, function(x) {
+        tapply(x$group_indices, x$names, identity)[unique(x$names)]
+      })
   }
-  # replace NA elements by an empty single row tibble
-  na_indices <- is.na(pattern_indices)
-  res[na_indices] <- replicate(sum(na_indices), data.frame(row.names = 1))
-  # bind everything
-  res <- bind_rows2(res)
-  rownames(res) <- NULL
-  # convert if relevant
-  if (convert) res <- utils::type.convert(res, as.is = TRUE)
-  res
+  patterns_regex
 }
 
-# simulate bind_rows to spare a dependency
-# bind_rows2(list(mtcars[1:2, 1:3], mtcars[1:2, 2:4]))
-bind_rows2 <- function(x){
-  nms <- unique(unlist(sapply(x, names)))
-  x[] <- lapply(x,function(x) {x[nms[!nms %in% names(x)]] <- NA; x})
-  do.call(rbind,x)
-}
-
-setNames <-function (object = nm, nm) {
-  names(object) <- nm
-  object
-}
-
-
-#' unglue a column and unnest it
-#'
-#' `unglue_unnest()` extracts variables as new columns of the input data frame.
-#'
-#'  `unnest(data, var, patterns)` is similar to
-#'  `dplyr::mutate(data, unglued = unglue(var, patterns)) %>% tidyr::unnest()`
-#'  using tidyverse packages but is more compact and dependence free
-#'
-#' @inheritParams unglue
-#' @param data a data frame
-#' @param var the unquoted name of the column to unglue and unnest
-#' @param keep wether to keep the original text column
-#'
-#' @return a data frame with the same attributes as the input (apart from names)
-#' @seealso unglue, unglue_data
+#' @rdname unglue
 #' @export
-#' @examples
-#' facts <- c("Antarctica is the largest desert in the world!",
-#'   "The largest country in Europe is Russia!",
-#'   "The smallest country in Europe is Vatican!",
-#'   "Disneyland is the most visited place in Europe! Disneyland is in Paris!",
-#'   "The largest island in the world is Green Land!")
-#' facts_df <- data.frame(id = 1:5, facts)
-#' patterns <- c("The {adjective} {place_type} in {bigger_place} is {place}!",
-#'             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
-#' unglue_unnest(facts_df, facts, patterns)
-#' unglue_unnest(facts_df, facts, patterns, keep = FALSE)
-unglue_unnest <- function(data, var, patterns, open = "{", close = "}", convert = TRUE, keep = TRUE){
+unglue_unnest <- function(data, col, patterns, open = "{", close = "}",remove = TRUE, convert = FALSE){
+  # save the attributes of our data.frame, except for the names
   attr_bkp <- attributes(data)
   attr_bkp$names <- NULL
-  var <- deparse(substitute(var))
-  ud  <- unglue_data(data[[var]], patterns, open = open, close = close, convert = convert)
-  if(!keep) data[[var]] <- NULL
+  # use unglue_data on the column whose raw name is fed to `var`
+  col <- deparse(substitute(col))
+  ud  <- unglue_data(data[[col]], patterns, open = open, close = close, convert = convert)
+  # remove this column if relevant
+  if(remove) data[[col]] <- NULL
+  # bind the source and built datasets together
   res <- cbind(data, ud)
+  # make unique names in case of duplicated
   names(res) <- make.unique(names(res))
+  # restore the attibutes
   attributes(res) <- c(attr_bkp, list(names = names(res)))
   res
 }
