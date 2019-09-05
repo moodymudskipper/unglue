@@ -67,7 +67,7 @@ unglue_data0 <- function(
   } else if(inherits(convert, "formula")){
     if(!requireNamespace("rlang"))
       stop("rlang package must be installed to use formula notation in `convert` argument of unglue functions")
-    convert <- rlang::as_function(rlang)
+    convert <- rlang::as_function(convert)
     res <- convert(res)
   }
 
@@ -129,7 +129,7 @@ unglue_vec0 <- function(x, patterns_regex, var, convert){
   } else if(inherits(convert, "formula")){
     if(!requireNamespace("rlang"))
       stop("rlang package must be installed to use formula notation in `convert` argument of unglue functions")
-    convert <- rlang::as_function(rlang)
+    convert <- rlang::as_function(convert)
     res <- convert(res)
   }
 
