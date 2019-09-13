@@ -6,7 +6,7 @@
 * Changed names, order, and default values of arguments to be consistent with
 `tidyr::extract()` as both functions had similar syntax and functionality and
 differences might create confusion.
-* A new function `unglue_to_regex()` can translate unglue patterns
+* A new function `unglue_regex()` can translate unglue patterns
 into proper regex.
 * A new function `unglue_vec()` extracts a single value from each string.
 * A new function `unglue_detect()` returns a logical indicator, indicating which
@@ -22,7 +22,7 @@ using the relevant pattern.
  
 TO DO:
  
-* find the right name and values for multiple argument of unglue_to_regex
+* find the right name and values for multiple argument of unglue_regex
 * rework the readme
 * make a vignette
 * push and make it work with Travis to get the badges etc

@@ -11,7 +11,7 @@
 #' * `unglue_vec()` to extract one value by element of `x`, chosen by indice or by
 #'   name.
 #' * `unglue_unnest()` to extract value from a column of a data frame to new columns
-#' * `unglue_to_regex()` to transform a vector of patterns given in the unglue
+#' * `unglue_regex()` to transform a vector of patterns given in the unglue
 #'   format to a vector of proper  regex (PCRE) patterns (so they can for instance
 #'   be used with functions from other packages).
 #'
@@ -84,7 +84,7 @@
 #' unglue_unnest(facts_df, facts, patterns, remove = FALSE)
 unglue  <- function(
   x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
-  patterns_regex <- unglue_to_regex(
+  patterns_regex <- unglue_regex(
     patterns, open = open, close = close, multiple = multiple,
     named_capture = FALSE, attributes = TRUE)
   unglue_data0(x, patterns_regex, convert, multiple, output = "list")
@@ -95,7 +95,7 @@ unglue  <- function(
 #'
 unglue_data  <- function(
   x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
-  patterns_regex <- unglue_to_regex(
+  patterns_regex <- unglue_regex(
     patterns, open = open, close = close, multiple = multiple,
     named_capture = FALSE, attributes = TRUE)
   unglue_data0(x, patterns_regex, convert, multiple, output = "data.frame")
@@ -106,7 +106,7 @@ unglue_data  <- function(
 #'
 unglue_detect  <- function(
   x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
-  patterns_regex <- unglue_to_regex(
+  patterns_regex <- unglue_regex(
     patterns, open = open, close = close, multiple = multiple,
     named_capture = FALSE, attributes = TRUE)
   unglue_data0(x, patterns_regex, convert, multiple, output = "logical")
@@ -116,7 +116,7 @@ unglue_detect  <- function(
 #' @export
 unglue_vec  <- function(
   x, patterns, var = 1, open = "{", close = "}", convert = FALSE, multiple = NULL){
-  patterns_regex <- unglue_to_regex(
+  patterns_regex <- unglue_regex(
     patterns, open = open, close = close, multiple = multiple,
     named_capture = FALSE, attributes = TRUE)
   if((!is.character(var) && !is.numeric(var)) || length(var) != 1){
@@ -127,7 +127,7 @@ unglue_vec  <- function(
 
 #' @rdname unglue
 #' @export
-unglue_to_regex <- function(
+unglue_regex <- function(
   patterns, open = "{", close = "}", multiple = NULL,
   named_capture = FALSE, attributes = FALSE){
   if(!is.null(multiple) && named_capture){

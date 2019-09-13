@@ -5,7 +5,7 @@
 \alias{unglue_data}
 \alias{unglue_detect}
 \alias{unglue_vec}
-\alias{unglue_to_regex}
+\alias{unglue_regex}
 \alias{unglue_unnest}
 \title{unglue}
 \usage{
@@ -21,7 +21,7 @@ unglue_detect(x, patterns, open = "{", close = "}", convert = FALSE,
 unglue_vec(x, patterns, var = 1, open = "{", close = "}",
   convert = FALSE, multiple = NULL)
 
-unglue_to_regex(patterns, open = "{", close = "}", multiple = NULL,
+unglue_regex(patterns, open = "{", close = "}", multiple = NULL,
   named_capture = FALSE, attributes = FALSE)
 
 unglue_unnest(data, col, patterns, open = "{", close = "}",
@@ -76,7 +76,7 @@ just as \code{glue::glue_data()} does in reverse
 \item \code{unglue_vec()} to extract one value by element of \code{x}, chosen by indice or by
 name.
 \item \code{unglue_unnest()} to extract value from a column of a data frame to new columns
-\item \code{unglue_to_regex()} to transform a vector of patterns given in the unglue
+\item \code{unglue_regex()} to transform a vector of patterns given in the unglue
 format to a vector of proper  regex (PCRE) patterns (so they can for instance
 be used with functions from other packages).
 }
