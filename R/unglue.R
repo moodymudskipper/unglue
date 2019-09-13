@@ -103,6 +103,17 @@ unglue_data  <- function(
 
 #' @rdname unglue
 #' @export
+#'
+unglue_detect  <- function(
+  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  patterns_regex <- unglue_to_regex(
+    patterns, open = open, close = close, multiple = multiple,
+    named_capture = FALSE, attributes = TRUE)
+  unglue_data0(x, patterns_regex, convert, multiple, output = "logical")
+}
+
+#' @rdname unglue
+#' @export
 unglue_vec  <- function(
   x, patterns, var = 1, open = "{", close = "}", convert = FALSE, multiple = NULL){
   patterns_regex <- unglue_to_regex(

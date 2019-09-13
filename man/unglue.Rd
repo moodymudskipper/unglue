@@ -3,6 +3,7 @@
 \name{unglue}
 \alias{unglue}
 \alias{unglue_data}
+\alias{unglue_detect}
 \alias{unglue_vec}
 \alias{unglue_to_regex}
 \alias{unglue_unnest}
@@ -12,6 +13,9 @@ unglue(x, patterns, open = "{", close = "}", convert = FALSE,
   multiple = NULL)
 
 unglue_data(x, patterns, open = "{", close = "}", convert = FALSE,
+  multiple = NULL)
+
+unglue_detect(x, patterns, open = "{", close = "}", convert = FALSE,
   multiple = NULL)
 
 unglue_vec(x, patterns, var = 1, open = "{", close = "}",

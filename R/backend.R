@@ -4,6 +4,7 @@ unglue_data0 <- function(
 
   # assign a pattern to each element
   pattern_indices <- pattern_match(x, patterns_regex)
+  if (output == "logical") return(!is.na(pattern_indices))
 
   # initiate a list of results
   res <- as.list(rep.int(NA,length(x)))

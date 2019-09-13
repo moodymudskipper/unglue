@@ -48,48 +48,6 @@ as.data.frame2 <- function(l){
   structure(l, class ="data.frame", row.names = seq.int(nrows))
 }
 
-
-res_i_to_df_list <- function(res_i, nms_i, multiple) {
-  if(is.null(multiple)) {
-    # I think we need to act on multiple here because else we'll have to deal with NAs
-    # and corner cases
-    res_i <- lapply(res_i, function(x) {
-      l <- setNames(as.list(x), nms_i)
-      as.data.frame(l, stringsAsFactors = FALSE)
-    })
-  } else {
-    if(inherits(multiple, "formula")){
-      if(!requireNamespace("rlang"))
-        stop("rlang package must be installed to use formula notation in `multiple` argument of unglue functions")
-      multiple <- rlang::as_function(multiple)
-    }
-
-
-    # loop on the results (of a given pattern)
-    res_i <- lapply(res_i, function(x) {
-      # loop on the names of subpatterns
-      res_ij <- tapply(
-        simplify = FALSE,
-        x,nms_i,
-        function(x) {
-          if(length(x)==1) x else {
-            # call `multiple` on all values
-            agg_val <- do.call(multiple,as.list(x))
-            # if the result is not a scalar, wrap it in a list
-            if(is.list(agg_val) || length(agg_val) > 1)
-              agg_val <- list(agg_val)
-            agg_val
-          }
-        })
-      # reorder
-      res_ij <- res_ij[unique(nms_i)]
-      # convert
-      as.data.frame2(res_ij)
-    })
-  }
-  res_i
-}
-
 parse_brackets <- function(patterns, matched, multiple, named_capture = FALSE) {
 
   # loop on patterns and matched in parallel to get a list containing for
