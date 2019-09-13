@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 # unglue
 
-The package *unglue* features functions `unglue()`, `unglue_data()` and
+The package *unglue* features functions such as `unglue()`, `unglue_data()` and
 `unglue_unnest()` which provide in many cases a more readable alternative to
 base regex functions. Simple cases indeed don't require regex knowledge at all.
 
@@ -66,25 +66,6 @@ Note that the second pattern uses some regex, regex needs to be typed after an
 `=` sign, if its has no left hand side then the expression won't be attributed 
 to a variable. in fact the pattern `"{foo}"` is a shorthand for `"{foo=.*?}"`.
 
-### usage in tidyverse code
-
-`unglue()` is more suitable than `unglue_data()` in pipe chains:
-
-```{r}
-suppressMessages(library(tidyverse))
-facts_df %>%
-  mutate(unglued = unglue(facts, patterns)) %>%
-  unnest()
-```
-
-However it is often moreconvenient to use `unglue_unnest()` which is very similar
-but more compact and doesn't require any additional package :
-
-```{r}
-unglue_unnest(facts_df, facts, patterns)
-unglue_unnest(facts_df, facts, patterns, keep = FALSE)
-```
-
 ### escaping characters
 
 Special characters outside of the curly braces should not be escaped.
@@ -97,13 +78,73 @@ unglue_data(sentences, patterns)
 
 ### type conversion
 
-Types are converted automatically so in the example above the column `number` 
-is numeric.
-
-To switch off the behavior set `convert = FALSE`
+In order to convert types automatically we can set `convert = TRUE`, in the example above the column `number` will be converted to numeric.
 
 ```{r}
-unglue_data(sentences, patterns, convert = FALSE)
+unglue_data(sentences, patterns, convert = TRUE)
 ```
 
+`convert = TRUE` triggers the use of `utils::type.convert` with parameter
+`as.is = TRUE`. We can also set `convert` to another conversion function such
+as `readr::type_convert`, or to a formula is *rlang* is installed.
 
+### `unglue_unnest()`
+
+`unglue_unnest()` is named as a tribute to `tidyr::unnest()` as it's equivalent
+to using sucessively `unglue()` and `unnest()` on a data frame column. It is
+similar to `tidyr::extract()` in its syntax and efforts were made to make it as
+consistent as possible.
+
+```{r}
+unglue_unnest(facts_df, facts, patterns)
+unglue_unnest(facts_df, facts, patterns, remove = FALSE)
+```
+
+### `unglue_vec()`
+
+While `unglue()` returns a list of data frames, `unglue_vec()` returns a character
+vector (unless `convert = TRUE`), if several matches are found in a string the
+extracted match will be chosen by name or by position.
+
+```{r}
+unglue_vec(sentences, patterns, "number")
+unglue_vec(sentences, patterns, 1)
+```
+
+### `unglue_detect()`
+
+`unglue_detect()` returns a logical vector, it's convenient to check that the
+input was matched by a pattern, or to subset the input to take a look at
+unmatched elements.
+
+```{r}
+unglue_detect(sentences, patterns)
+subset(sentences, !unglue_detect(sentences, patterns))
+```
+
+### `unglue_regex()`
+
+`unglue_regex()` returns a character vector of regex patterns, all over functions
+are wrapped around it and it can be used to leverage the *unglue* in other
+functions.
+
+```{r}
+unglue_regex(patterns)
+unglue_regex(patterns, named_capture = TRUE)
+unglue_regex(patterns, attributes = TRUE)
+```
+
+### duplicated labels
+
+We can ensure that a pattern is repeated by repeating its label
+
+```{r}
+unglue_data(c("black is black","black is dark"), "{color} is {color}")
+```
+
+We can change this behavior by feeding a function to the `multiple` parameter,
+in that case this function will be applies on the matches.
+
+```{r}
+unglue_data(c("black is black","black is dark"), "{color} is {color}", multiple = paste)
+```
