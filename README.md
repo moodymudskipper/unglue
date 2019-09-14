@@ -64,8 +64,6 @@ facts_df <- data.frame(id = 1:5, facts)
 patterns <- c("The {adjective} {place_type} in {bigger_place} is {place}!",
             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
 unglue_data(facts, patterns)
-#> Warning in !dupes_lgl & !empty_nms_lgl: longer object length is not a
-#> multiple of shorter object length
 #>        place    adjective place_type bigger_place
 #> 1 Antarctica      largest     desert    the world
 #> 2     Russia      largest    country       Europe

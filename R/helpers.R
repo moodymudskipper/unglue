@@ -102,7 +102,7 @@ parse_bracket <- function(x, use_multiple, named_capture = FALSE){
       subpat[i_dupes] <- paste0("\\",group_indices[i_first])
       nms <- nms[-i_dupes]
     }
-    group_indices <- group_indices[!dupes_lgl & !empty_nms_lgl]
+    group_indices <- group_indices[!empty_nms_lgl][!dupes_lgl]
   } else {
     n_unescaped_parens <- nchar(gsub("[^(]|\\\\\\(", "", subpat))
     group_indices <- cumsum(c(1,n_unescaped_parens))
