@@ -1,11 +1,10 @@
-<!-- badges: start -->
-  [![Travis build status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
-<!-- badges: end -->
 ---
 output: github_document
 ---
 
-
+<!-- badges: start -->
+  [![Travis build status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
+<!-- badges: end -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(

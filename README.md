@@ -1,23 +1,29 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-unglue
-======
+<!-- badges: start -->
 
-The package *unglue* features functions `unglue()`, `unglue_data()` and `unglue_unnest()` which provide in many cases a more readable alternative to base regex functions. Simple cases indeed don't require regex knowledge at all.
+[![Travis build
+status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
+<!-- badges: end -->
 
-It uses a syntax inspired from the functions of Jim Hester's *glue* package to extract matched substrings using a pattern, but is not endorsed by the authors of *glue* nor *tidyverse* packages.
+# unglue
 
-It is completely dependency free.
+The package *unglue* features functions such as `unglue()`,
+`unglue_data()` and `unglue_unnest()` which provide in many cases a more
+readable alternative to base regex functions. Simple cases indeed don’t
+require regex knowledge at all.
 
-Installation:
--------------
+It uses a syntax inspired from the functions of Jim Hester’s *glue*
+package to extract matched substrings using a pattern, but is not
+endorsed by the authors of *glue* nor *tidyverse* packages.
+
+It is completely dependency free, though formula notation of functions
+is supported if *rlang* is installed.
+
+## Installation:
 
 ``` r
 remotes::install_github("moodymudskipper/unglue")
 ```
-
-Examples
---------
 
 ### using an example from `?glue::glue` backwards
 
@@ -25,6 +31,7 @@ Examples
 library(unglue)
 library(glue)
 library(magrittr)
+library(utils)
 glued_data <- head(mtcars) %>% glue_data("{rownames(.)} has {hp} hp")
 glued_data
 #> Mazda RX4 has 110 hp
@@ -56,6 +63,8 @@ facts_df <- data.frame(id = 1:5, facts)
 patterns <- c("The {adjective} {place_type} in {bigger_place} is {place}!",
             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
 unglue_data(facts, patterns)
+#> Warning in !dupes_lgl & !empty_nms_lgl: longer object length is not a
+#> multiple of shorter object length
 #>        place    adjective place_type bigger_place
 #> 1 Antarctica      largest     desert    the world
 #> 2     Russia      largest    country       Europe
@@ -64,67 +73,10 @@ unglue_data(facts, patterns)
 #> 5 Green Land      largest     island    the world
 ```
 
-Note that the second pattern uses some regex, regex needs to be typed after an `=` sign, if its has no left hand side then the expression won't be attributed to a variable. in fact the pattern `"{foo}"` is a shorthand for `"{foo=.*?}"`.
-
-### usage in tidyverse code
-
-`unglue()` is more suitable than `unglue_data()` in pipe chains:
-
-``` r
-suppressMessages(library(tidyverse))
-facts_df %>%
-  mutate(unglued = unglue(facts, patterns)) %>%
-  unnest()
-#>   id
-#> 1  1
-#> 2  2
-#> 3  3
-#> 4  4
-#> 5  5
-#>                                                                     facts
-#> 1                          Antarctica is the largest desert in the world!
-#> 2                                The largest country in Europe is Russia!
-#> 3                              The smallest country in Europe is Vatican!
-#> 4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
-#> 5                          The largest island in the world is Green Land!
-#>        place    adjective place_type bigger_place
-#> 1 Antarctica      largest     desert    the world
-#> 2     Russia      largest    country       Europe
-#> 3    Vatican     smallest    country       Europe
-#> 4 Disneyland most visited      place       Europe
-#> 5 Green Land      largest     island    the world
-```
-
-However it is often moreconvenient to use `unglue_unnest()` which is very similar but more compact and doesn't require any additional package :
-
-``` r
-unglue_unnest(facts_df, facts, patterns)
-#>   id
-#> 1  1
-#> 2  2
-#> 3  3
-#> 4  4
-#> 5  5
-#>                                                                     facts
-#> 1                          Antarctica is the largest desert in the world!
-#> 2                                The largest country in Europe is Russia!
-#> 3                              The smallest country in Europe is Vatican!
-#> 4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
-#> 5                          The largest island in the world is Green Land!
-#>        place    adjective place_type bigger_place
-#> 1 Antarctica      largest     desert    the world
-#> 2     Russia      largest    country       Europe
-#> 3    Vatican     smallest    country       Europe
-#> 4 Disneyland most visited      place       Europe
-#> 5 Green Land      largest     island    the world
-unglue_unnest(facts_df, facts, patterns, keep = FALSE)
-#>   id      place    adjective place_type bigger_place
-#> 1  1 Antarctica      largest     desert    the world
-#> 2  2     Russia      largest    country       Europe
-#> 3  3    Vatican     smallest    country       Europe
-#> 4  4 Disneyland most visited      place       Europe
-#> 5  5 Green Land      largest     island    the world
-```
+Note that the second pattern uses some regex, regex needs to be typed
+after an `=` sign, if its has no left hand side then the expression
+won’t be attributed to a variable. in fact the pattern `"{foo}"` is a
+shorthand for `"{foo=.*?}"`.
 
 ### escaping characters
 
@@ -136,22 +88,131 @@ patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 unglue_data(sentences, patterns)
 #>   number       what word
 #> 1    666   a number <NA>
+#> 2   <NA>     a word  foo
+#> 3     42 the answer <NA>
+#> 4   <NA>       <NA> <NA>
+```
+
+### type conversion
+
+In order to convert types automatically we can set `convert = TRUE`, in
+the example above the column `number` will be converted to numeric.
+
+``` r
+unglue_data(sentences, patterns, convert = TRUE)
+#>   number       what word
+#> 1    666   a number <NA>
 #> 2     NA     a word  foo
 #> 3     42 the answer <NA>
 #> 4     NA       <NA> <NA>
 ```
 
-### type conversion
+`convert = TRUE` triggers the use of `utils::type.convert` with
+parameter `as.is = TRUE`. We can also set `convert` to another
+conversion function such as `readr::type_convert`, or to a formula is
+*rlang* is installed.
 
-Types are converted automatically so in the example above the column `number` is numeric.
+### `unglue_unnest()`
 
-To switch off the behavior set `convert = FALSE`
+`unglue_unnest()` is named as a tribute to `tidyr::unnest()` as it’s
+equivalent to using sucessively `unglue()` and `unnest()` on a data
+frame column. It is similar to `tidyr::extract()` in its syntax and
+efforts were made to make it as consistent as possible.
 
 ``` r
-unglue_data(sentences, patterns, convert = FALSE)
-#>   number       what word
-#> 1    666   a number <NA>
-#> 2   <NA>     a word  foo
-#> 3     42 the answer <NA>
-#> 4   <NA>       <NA> <NA>
+unglue_unnest(facts_df, facts, patterns)
+#>   id
+#> 1  1
+#> 2  2
+#> 3  3
+#> 4  4
+#> 5  5
+unglue_unnest(facts_df, facts, patterns, remove = FALSE)
+#>   id
+#> 1  1
+#> 2  2
+#> 3  3
+#> 4  4
+#> 5  5
+#>                                                                     facts
+#> 1                          Antarctica is the largest desert in the world!
+#> 2                                The largest country in Europe is Russia!
+#> 3                              The smallest country in Europe is Vatican!
+#> 4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
+#> 5                          The largest island in the world is Green Land!
+```
+
+### `unglue_vec()`
+
+While `unglue()` returns a list of data frames, `unglue_vec()` returns a
+character vector (unless `convert = TRUE`), if several matches are found
+in a string the extracted match will be chosen by name or by position.
+
+``` r
+unglue_vec(sentences, patterns, "number")
+#> [1] "666" NA    "42"  NA
+unglue_vec(sentences, patterns, 1)
+#> [1] "666" "foo" "42"  NA
+```
+
+### `unglue_detect()`
+
+`unglue_detect()` returns a logical vector, it’s convenient to check
+that the input was matched by a pattern, or to subset the input to take
+a look at unmatched elements.
+
+``` r
+unglue_detect(sentences, patterns)
+#> [1]  TRUE  TRUE  TRUE FALSE
+subset(sentences, !unglue_detect(sentences, patterns))
+#> [1] "Area 51 is [unmatched]"
+```
+
+### `unglue_regex()`
+
+`unglue_regex()` returns a character vector of regex patterns, all over
+functions are wrapped around it and it can be used to leverage the
+*unglue* in other functions.
+
+``` r
+unglue_regex(patterns)
+#> {number=\\d+} is [{what}]   {word=\\D+} is [{what}] 
+#> "^(\\d+) is \\[(.*?)\\]$" "^(\\D+) is \\[(.*?)\\]$"
+unglue_regex(patterns, named_capture = TRUE)
+#>                 {number=\\d+} is [{what}] 
+#> "^(?<number>\\d+) is \\[(?<what>.*?)\\]$" 
+#>                   {word=\\D+} is [{what}] 
+#>   "^(?<word>\\D+) is \\[(?<what>.*?)\\]$"
+unglue_regex(patterns, attributes = TRUE)
+#> {number=\\d+} is [{what}]   {word=\\D+} is [{what}] 
+#> "^(\\d+) is \\[(.*?)\\]$" "^(\\D+) is \\[(.*?)\\]$" 
+#> attr(,"groups")
+#> attr(,"groups")$`{number=\\d+} is [{what}]`
+#> number   what 
+#>      1      2 
+#> 
+#> attr(,"groups")$`{word=\\D+} is [{what}]`
+#> word what 
+#>    1    2
+```
+
+### duplicated labels
+
+We can ensure that a pattern is repeated by repeating its label
+
+``` r
+unglue_data(c("black is black","black is dark"), "{color} is {color}")
+#>   color
+#> 1 black
+#> 2  <NA>
+```
+
+We can change this behavior by feeding a function to the `multiple`
+parameter, in that case this function will be applies on the matches.
+
+``` r
+unglue_data(c("black is black","black is dark"), "{color} is {color}", multiple = paste)
+#>         color
+#> 1 black black
+#> 2  black dark
 ```
