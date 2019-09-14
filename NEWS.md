@@ -19,11 +19,3 @@ using the relevant pattern.
 * *unglue* functions now have a `multiple` argument, when `multiple` is a 
  function instead of the default `NULL`, groups labelled by the same name are 
  combined.
- 
-TO DO:
- 
-* find the right name and values for multiple argument of unglue_regex
-* rework the readme
-* make a vignette
-* push and make it work with Travis to get the badges etc
-* submit to CRAN
