@@ -3,7 +3,7 @@ test_that("unglue_regex works", {
                  "42 is the answer", "Area 51 is unmatched")
   patterns <- c("{number=\\d+} is {what}", "{word=\\D+} is {what}")
   expect_error(
-    unglue_regex("{x} and {y}", multiple = paste0, named_capture = TRUE))
+    unglue_regex("{x} and {y}", use_multiple = TRUE, named_capture = TRUE))
   expect_error(
     unglue_regex("{x} and {y}", open = "|", close = "|"))
   expect_error(

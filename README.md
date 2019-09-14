@@ -3,7 +3,8 @@
 
 [![Travis build
 status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
-<!-- badges: end -->
+[![Coverage
+Status](https://img.shields.io/codecov/c/github/moodymudskipper/unglue/master.svg)](https://codecov.io/github/tidyverse/glue?branch=master)
 
 # unglue
 
