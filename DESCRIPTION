@@ -13,7 +13,8 @@ Suggests:
     rlang,
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    magrittr
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
