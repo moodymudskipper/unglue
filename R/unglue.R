@@ -46,6 +46,8 @@
 #'   same will match the same value. If a function is provided it will be fed
 #'   the conflicting values as separate arguments. Formula notation
 #'   is supported if the package `rlang` is installed.
+#' @param use_multiple wether we should consider that duplicate labels can match
+#'   different substrings.
 #' @param col column containing the character vector to extract values from.
 #' @param remove wether to remove the column `col` once extraction is performed
 #' @param var the numeric index or the name of the subpattern to extract from
@@ -85,7 +87,7 @@
 unglue  <- function(
   x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
   patterns_regex <- unglue_regex(
-    patterns, open = open, close = close, multiple = multiple,
+    patterns, open = open, close = close, use_multiple = !is.null(multiple),
     named_capture = FALSE, attributes = TRUE)
   unglue_data0(x, patterns_regex, convert, multiple, output = "list")
 }
@@ -96,7 +98,7 @@ unglue  <- function(
 unglue_data  <- function(
   x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
   patterns_regex <- unglue_regex(
-    patterns, open = open, close = close, multiple = multiple,
+    patterns, open = open, close = close, use_multiple = !is.null(multiple),
     named_capture = FALSE, attributes = TRUE)
   unglue_data0(x, patterns_regex, convert, multiple, output = "data.frame")
 }
@@ -107,7 +109,7 @@ unglue_data  <- function(
 unglue_detect  <- function(
   x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
   patterns_regex <- unglue_regex(
-    patterns, open = open, close = close, multiple = multiple,
+    patterns, open = open, close = close, use_multiple = !is.null(multiple),
     named_capture = FALSE, attributes = TRUE)
   unglue_data0(x, patterns_regex, convert, multiple, output = "logical")
 }
@@ -117,7 +119,7 @@ unglue_detect  <- function(
 unglue_vec  <- function(
   x, patterns, var = 1, open = "{", close = "}", convert = FALSE, multiple = NULL){
   patterns_regex <- unglue_regex(
-    patterns, open = open, close = close, multiple = multiple,
+    patterns, open = open, close = close, use_multiple = !is.null(multiple),
     named_capture = FALSE, attributes = TRUE)
   if((!is.character(var) && !is.numeric(var)) || length(var) != 1){
     stop("var should be a character or numeric of length 1")
@@ -128,10 +130,10 @@ unglue_vec  <- function(
 #' @rdname unglue
 #' @export
 unglue_regex <- function(
-  patterns, open = "{", close = "}", multiple = NULL,
+  patterns, open = "{", close = "}", use_multiple = FALSE,
   named_capture = FALSE, attributes = FALSE){
-  if(!is.null(multiple) && named_capture){
-    stop("named_capture can be TRUE only when used with default multiple = NULL")
+  if(use_multiple && named_capture){
+    stop("named_capture can be TRUE only when used with default use_multiple = FALSE")
   }
   if(!isTRUE(all(nchar(c(open, close)) == 1)))
     stop("open and close must be a single character")
@@ -148,7 +150,7 @@ unglue_regex <- function(
   # the starting position of matches (in a vector) and the matches length (as attributes)
   matched <- gregexpr(bracket_pattern, patterns, perl = TRUE)
   # extract from patterns : subpatterns, names and group indices
-  L <- parse_brackets(patterns, matched, multiple, named_capture = named_capture)
+  L <- parse_brackets(patterns, matched, use_multiple, named_capture = named_capture)
   subpat <- lapply(L, `[[`, "subpatterns")
 
   patterns_regex <- patterns

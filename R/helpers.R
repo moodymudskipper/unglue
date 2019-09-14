@@ -48,7 +48,7 @@ as.data.frame2 <- function(l){
   structure(l, class ="data.frame", row.names = seq.int(nrows))
 }
 
-parse_brackets <- function(patterns, matched, multiple, named_capture = FALSE) {
+parse_brackets <- function(patterns, matched, use_multiple, named_capture = FALSE) {
 
   # loop on patterns and matched in parallel to get a list containing for
   # each pattern a vector of bracket content
@@ -59,10 +59,10 @@ parse_brackets <- function(patterns, matched, multiple, named_capture = FALSE) {
   # parse these bracket contents into names (sometime "") and subpatterns
   # (the actual regex)
 
-  L <- lapply(bracket_content, parse_bracket, multiple = multiple, named_capture = named_capture)
+  L <- lapply(bracket_content, parse_bracket, use_multiple = use_multiple, named_capture = named_capture)
 }
 
-parse_bracket <- function(x, multiple, named_capture = FALSE){
+parse_bracket <- function(x, use_multiple, named_capture = FALSE){
   # wether bracket content contains "="
   eq <- grepl("=", x)
   # names are either the lhs if `=` is found, otherwise bracket content itself
@@ -85,7 +85,7 @@ parse_bracket <- function(x, multiple, named_capture = FALSE){
   # this should be only in the default case,
   # subpat should be altered for the cases where we have duplicate names
 
-  if(is.null(multiple)) {
+  if(!use_multiple) {
     dupes_lgl <- duplicated(nms)
 
     subpat[dupes_lgl] <- ""
