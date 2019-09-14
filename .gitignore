@@ -3,3 +3,4 @@ exclude/package_builder.R
 exclude
 .Rhistory
 .RData
+inst/doc

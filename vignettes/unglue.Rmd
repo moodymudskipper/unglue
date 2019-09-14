@@ -1,21 +1,18 @@
-<!-- badges: start -->
-  [![Travis build status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
-<!-- badges: end -->
 ---
-output: github_document
+title: "unglue"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{unglue}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
-
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  comment = "#>"
 )
 ```
-# unglue
 
 The package *unglue* features functions such as `unglue()`, `unglue_data()` and
 `unglue_unnest()` which provide in many cases a more readable alternative to
@@ -27,12 +24,6 @@ of *glue* nor *tidyverse* packages.
 
 It is completely dependency free, though formula notation of functions is
 supported if *rlang* is installed.
-
-## Installation:
-
-```{r,eval=FALSE}
-remotes::install_github("moodymudskipper/unglue")
-```
 
 ### using an example from `?glue::glue` backwards
 

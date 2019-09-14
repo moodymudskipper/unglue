@@ -21,7 +21,7 @@ unglue_detect(x, patterns, open = "{", close = "}", convert = FALSE,
 unglue_vec(x, patterns, var = 1, open = "{", close = "}",
   convert = FALSE, multiple = NULL)
 
-unglue_regex(patterns, open = "{", close = "}", multiple = NULL,
+unglue_regex(patterns, open = "{", close = "}", use_multiple = FALSE,
   named_capture = FALSE, attributes = FALSE)
 
 unglue_unnest(data, col, patterns, open = "{", close = "}",
@@ -50,6 +50,9 @@ the conflicting values as separate arguments. Formula notation
 is supported if the package \code{rlang} is installed.}
 
 \item{var}{the numeric index or the name of the subpattern to extract from}
+
+\item{use_multiple}{wether we should consider that duplicate labels can match
+different substrings.}
 
 \item{named_capture}{wether to incorporate the names of the groups in the
 ouput regex}
