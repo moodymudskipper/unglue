@@ -83,8 +83,8 @@ Special characters outside of the curly braces should not be escaped.
 
 ``` r
 sentences <- c("666 is [a number]", "foo is [a word]", "42 is [the answer]", "Area 51 is [unmatched]")
-patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
-unglue_data(sentences, patterns)
+patterns2 <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
+unglue_data(sentences, patterns2)
 #>   number       what word
 #> 1    666   a number <NA>
 #> 2   <NA>     a word  foo
@@ -98,7 +98,7 @@ In order to convert types automatically we can set `convert = TRUE`, in
 the example above the column `number` will be converted to numeric.
 
 ``` r
-unglue_data(sentences, patterns, convert = TRUE)
+unglue_data(sentences, patterns2, convert = TRUE)
 #>   number       what word
 #> 1    666   a number <NA>
 #> 2     NA     a word  foo
@@ -120,12 +120,12 @@ efforts were made to make it as consistent as possible.
 
 ``` r
 unglue_unnest(facts_df, facts, patterns)
-#>   id
-#> 1  1
-#> 2  2
-#> 3  3
-#> 4  4
-#> 5  5
+#>   id      place    adjective place_type bigger_place
+#> 1  1 Antarctica      largest     desert    the world
+#> 2  2     Russia      largest    country       Europe
+#> 3  3    Vatican     smallest    country       Europe
+#> 4  4 Disneyland most visited      place       Europe
+#> 5  5 Green Land      largest     island    the world
 unglue_unnest(facts_df, facts, patterns, remove = FALSE)
 #>   id
 #> 1  1
@@ -139,6 +139,12 @@ unglue_unnest(facts_df, facts, patterns, remove = FALSE)
 #> 3                              The smallest country in Europe is Vatican!
 #> 4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
 #> 5                          The largest island in the world is Green Land!
+#>        place    adjective place_type bigger_place
+#> 1 Antarctica      largest     desert    the world
+#> 2     Russia      largest    country       Europe
+#> 3    Vatican     smallest    country       Europe
+#> 4 Disneyland most visited      place       Europe
+#> 5 Green Land      largest     island    the world
 ```
 
 ### `unglue_vec()`
@@ -148,9 +154,9 @@ character vector (unless `convert = TRUE`), if several matches are found
 in a string the extracted match will be chosen by name or by position.
 
 ``` r
-unglue_vec(sentences, patterns, "number")
+unglue_vec(sentences, patterns2, "number")
 #> [1] "666" NA    "42"  NA
-unglue_vec(sentences, patterns, 1)
+unglue_vec(sentences, patterns2, 1)
 #> [1] "666" "foo" "42"  NA
 ```
 
@@ -161,9 +167,9 @@ that the input was matched by a pattern, or to subset the input to take
 a look at unmatched elements.
 
 ``` r
-unglue_detect(sentences, patterns)
+unglue_detect(sentences, patterns2)
 #> [1]  TRUE  TRUE  TRUE FALSE
-subset(sentences, !unglue_detect(sentences, patterns))
+subset(sentences, !unglue_detect(sentences, patterns2))
 #> [1] "Area 51 is [unmatched]"
 ```
 
@@ -175,24 +181,28 @@ functions are wrapped around it and it can be used to leverage the
 
 ``` r
 unglue_regex(patterns)
-#> {number=\\d+} is [{what}]   {word=\\D+} is [{what}] 
-#> "^(\\d+) is \\[(.*?)\\]$" "^(\\D+) is \\[(.*?)\\]$"
+#>            The {adjective} {place_type} in {bigger_place} is {place}! 
+#>                                "^The (.*?) (.*?) in (.*?) is (.*?)!$" 
+#> {place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*} 
+#>                            "^(.*?) is the (.*?) ([^ ]+) in (.*?)!.*$"
 unglue_regex(patterns, named_capture = TRUE)
-#>                 {number=\\d+} is [{what}] 
-#> "^(?<number>\\d+) is \\[(?<what>.*?)\\]$" 
-#>                   {word=\\D+} is [{what}] 
-#>   "^(?<word>\\D+) is \\[(?<what>.*?)\\]$"
+#>                                 The {adjective} {place_type} in {bigger_place} is {place}! 
+#>     "^The (?<adjective>.*?) (?<place_type>.*?) in (?<bigger_place>.*?) is (?<place>.*?)!$" 
+#>                      {place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*} 
+#> "^(?<place>.*?) is the (?<adjective>.*?) (?<place_type>[^ ]+) in (?<bigger_place>.*?)!.*$"
 unglue_regex(patterns, attributes = TRUE)
-#> {number=\\d+} is [{what}]   {word=\\D+} is [{what}] 
-#> "^(\\d+) is \\[(.*?)\\]$" "^(\\D+) is \\[(.*?)\\]$" 
+#>            The {adjective} {place_type} in {bigger_place} is {place}! 
+#>                                "^The (.*?) (.*?) in (.*?) is (.*?)!$" 
+#> {place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*} 
+#>                            "^(.*?) is the (.*?) ([^ ]+) in (.*?)!.*$" 
 #> attr(,"groups")
-#> attr(,"groups")$`{number=\\d+} is [{what}]`
-#> number   what 
-#>      1      2 
+#> attr(,"groups")$`The {adjective} {place_type} in {bigger_place} is {place}!`
+#>    adjective   place_type bigger_place        place 
+#>            1            2            3            4 
 #> 
-#> attr(,"groups")$`{word=\\D+} is [{what}]`
-#> word what 
-#>    1    2
+#> attr(,"groups")$`{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}`
+#>        place    adjective   place_type bigger_place 
+#>            1            2            3            4
 ```
 
 ### duplicated labels
