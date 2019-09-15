@@ -1,6 +1,4 @@
-# unglue (development version)
-
-# unglue 0.0.0.9001
+# unglue 0.0.1
 
 * Added a `NEWS.md` file to track changes to the package.
 * Changed names, order, and default values of arguments to be consistent with
