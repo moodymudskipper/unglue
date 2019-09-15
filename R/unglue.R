@@ -1,7 +1,25 @@
+#' Detect if strings are matched by a set of unglue patterns
+#'
+#' Returns a logical indicating which strings were matched
+#' @inheritParams  unglue
+#' @export
+#' @examples
+#' sentences <- c("666 is [a number]", "foo is [a word]",
+#'                "42 is [the answer]", "Area 51 is [unmatched]")
+#' patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
+#' unglue_detect(sentences, patterns)
+unglue_detect  <- function(
+  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  patterns_regex <- unglue_regex(
+    patterns, open = open, close = close, use_multiple = !is.null(multiple),
+    named_capture = FALSE, attributes = TRUE)
+  unglue_data0(x, patterns_regex, convert, multiple, output = "logical")
+}
+
 #' unglue
 #'
-#' The functions from the package *unglue* extract matched substrings using a
-#' syntax inspired from `glue::glue()`.
+#' The functions `unglue_data()`, `unglue()`, `unglue_vec()` and `unglue_unnest()`
+#' extract matched substrings using a syntax inspired from `glue::glue()`.
 #' Simple cases don't require regex knowledge at all.
 #'
 #' Depending on the task you might want:
@@ -11,9 +29,6 @@
 #' * `unglue_vec()` to extract one value by element of `x`, chosen by indice or by
 #'   name.
 #' * `unglue_unnest()` to extract value from a column of a data frame to new columns
-#' * `unglue_regex()` to transform a vector of patterns given in the unglue
-#'   format to a vector of proper  regex (PCRE) patterns (so they can for instance
-#'   be used with functions from other packages).
 #'
 #' To build the relevant regex pattern special characters will be escaped in the
 #' input pattern and the subpatterns will be replaced with `(.*?)` if in standard
@@ -46,14 +61,9 @@
 #'   same will match the same value. If a function is provided it will be fed
 #'   the conflicting values as separate arguments. Formula notation
 #'   is supported if the package `rlang` is installed.
-#' @param use_multiple wether we should consider that duplicate labels can match
-#'   different substrings.
 #' @param col column containing the character vector to extract values from.
 #' @param remove wether to remove the column `col` once extraction is performed
-#' @param var the numeric index or the name of the subpattern to extract from
-#' @param named_capture wether to incorporate the names of the groups in the
-#'   ouput regex
-#' @param attributes wether to give group attributes to the output
+#' @param var for `unglue_vec()`, the numeric index or the name of the subpattern to extract from
 #'
 #' @export
 #'
@@ -103,16 +113,7 @@ unglue_data  <- function(
   unglue_data0(x, patterns_regex, convert, multiple, output = "data.frame")
 }
 
-#' @rdname unglue
-#' @export
-#'
-unglue_detect  <- function(
-  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
-  patterns_regex <- unglue_regex(
-    patterns, open = open, close = close, use_multiple = !is.null(multiple),
-    named_capture = FALSE, attributes = TRUE)
-  unglue_data0(x, patterns_regex, convert, multiple, output = "logical")
-}
+
 
 #' @rdname unglue
 #' @export
@@ -127,67 +128,6 @@ unglue_vec  <- function(
   unglue_vec0(x, patterns_regex, var, convert = convert)
 }
 
-#' @rdname unglue
-#' @export
-unglue_regex <- function(
-  patterns, open = "{", close = "}", use_multiple = FALSE,
-  named_capture = FALSE, attributes = FALSE){
-  if(use_multiple && named_capture){
-    stop("named_capture can be TRUE only when used with default use_multiple = FALSE")
-  }
-  if(!isTRUE(all(nchar(c(open, close)) == 1)))
-    stop("open and close must be a single character")
-  if(open == close)
-    stop("open and close can't be the same character")
-  # collapse patterns into list of strings (or single string)
-  patterns <- sapply(patterns, paste, collapse = "")
-  # escape variable delimiters
-  open1 <- regex_escape(open)
-  close1 <- regex_escape(close)
-  # define pattern which will help extract the content of our brackets
-  bracket_pattern <- paste0(open1,"(?>[^",open,close,"]|(?R))*", close1)
-  # matched will be a list containing for each pattern
-  # the starting position of matches (in a vector) and the matches length (as attributes)
-  matched <- gregexpr(bracket_pattern, patterns, perl = TRUE)
-  # extract from patterns : subpatterns, names and group indices
-  L <- parse_brackets(patterns, matched, use_multiple, named_capture = named_capture)
-  subpat <- lapply(L, `[[`, "subpatterns")
-
-  patterns_regex <- patterns
-  # clean up patterns now that we've extracted the relevant content
-  # it changes all "{...}" to "\\{\\}" placeholders, including cases with nested "{"
-  regmatches(patterns_regex, matched) <- paste0(open1,close1)
-
-  # escape double delimiters to consider them as one, the actual delimiters have
-  # been escaped through previous step so are safe
-  patterns_regex <- gsub(strrep(open1,2) ,open, patterns_regex)
-  patterns_regex <- gsub(strrep(close1,2),close, patterns_regex)
-
-  # To build our full regex pattern we need to escape all the relevant characters
-  # in the patterns, which means contained open and close will be escaped too,
-  # so to match them we need to escape them 2 further times
-  open2  <- regex_escape(open1,2)
-  close2 <- regex_escape(close1,2)
-  patterns_regex <- regex_escape(patterns_regex)
-  # matched will be a list containing for each pattern
-  # the starting position of matches (in a vector) and the matches length (as attributes)
-  matched <- gregexpr(paste0(open2,close2), patterns_regex, perl = T)
-
-  # replace the placeholder with the actual regex
-  regmatches(patterns_regex, matched) <- subpat
-  # complete the pattern with start and end of string
-  patterns_regex <- paste0("^",patterns_regex,"$")
-
-  patterns_regex <- setNames(patterns_regex, patterns)
-  if(named_capture) return(patterns_regex)
-  if(attributes) {
-    attr(patterns_regex, "groups") <-
-      lapply(L, function(x) {
-        tapply(x$group_indices, x$names, identity)[unique(x$names)]
-      })
-  }
-  patterns_regex
-}
 
 #' @rdname unglue
 #' @export

@@ -3,9 +3,7 @@
 \name{unglue}
 \alias{unglue}
 \alias{unglue_data}
-\alias{unglue_detect}
 \alias{unglue_vec}
-\alias{unglue_regex}
 \alias{unglue_unnest}
 \title{unglue}
 \usage{
@@ -15,14 +13,8 @@ unglue(x, patterns, open = "{", close = "}", convert = FALSE,
 unglue_data(x, patterns, open = "{", close = "}", convert = FALSE,
   multiple = NULL)
 
-unglue_detect(x, patterns, open = "{", close = "}", convert = FALSE,
-  multiple = NULL)
-
 unglue_vec(x, patterns, var = 1, open = "{", close = "}",
   convert = FALSE, multiple = NULL)
-
-unglue_regex(patterns, open = "{", close = "}", use_multiple = FALSE,
-  named_capture = FALSE, attributes = FALSE)
 
 unglue_unnest(data, col, patterns, open = "{", close = "}",
   remove = TRUE, convert = FALSE)
@@ -49,15 +41,7 @@ same will match the same value. If a function is provided it will be fed
 the conflicting values as separate arguments. Formula notation
 is supported if the package \code{rlang} is installed.}
 
-\item{var}{the numeric index or the name of the subpattern to extract from}
-
-\item{use_multiple}{wether we should consider that duplicate labels can match
-different substrings.}
-
-\item{named_capture}{wether to incorporate the names of the groups in the
-ouput regex}
-
-\item{attributes}{wether to give group attributes to the output}
+\item{var}{for \code{unglue_vec()}, the numeric index or the name of the subpattern to extract from}
 
 \item{data}{a data frame.}
 
@@ -66,8 +50,8 @@ ouput regex}
 \item{remove}{wether to remove the column \code{col} once extraction is performed}
 }
 \description{
-The functions from the package \emph{unglue} extract matched substrings using a
-syntax inspired from \code{glue::glue()}.
+The functions \code{unglue_data()}, \code{unglue()}, \code{unglue_vec()} and \code{unglue_unnest()}
+extract matched substrings using a syntax inspired from \code{glue::glue()}.
 Simple cases don't require regex knowledge at all.
 }
 \details{
@@ -79,9 +63,6 @@ just as \code{glue::glue_data()} does in reverse
 \item \code{unglue_vec()} to extract one value by element of \code{x}, chosen by indice or by
 name.
 \item \code{unglue_unnest()} to extract value from a column of a data frame to new columns
-\item \code{unglue_regex()} to transform a vector of patterns given in the unglue
-format to a vector of proper  regex (PCRE) patterns (so they can for instance
-be used with functions from other packages).
 }
 
 To build the relevant regex pattern special characters will be escaped in the
