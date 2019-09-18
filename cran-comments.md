@@ -8,3 +8,9 @@
 0 errors | 0 warnings | 0 notes
 
 * This is a new release.
+
+## Responding to Uwe Ligge's comments 2019-09-18
+
+Title field was simplified to 'Extract Matched Substrings Using a Pattern'
+
+Functionality was elaborated in the Description field
