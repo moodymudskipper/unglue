@@ -2,7 +2,7 @@ Package: unglue
 Title: Extract Matched Substrings Using a Pattern
 Version: 0.0.1
 Authors@R: person("Antoine", "Fabri", email = "antoine.fabri@gmail.com", role = c("aut", "cre"))
-Description: Use syntax inspired by the package glue to extract matched substrings in a more intuitive and compact way than by using standard regular expressions.
+Description: Use syntax inspired by the package 'glue' to extract matched substrings in a more intuitive and compact way than by using standard regular expressions.
 Depends: R (>= 3.1.0)
 License: GPL-3
 Encoding: UTF-8
