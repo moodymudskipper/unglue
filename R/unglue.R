@@ -1,7 +1,8 @@
 #' Detect if strings are matched by a set of unglue patterns
 #'
-#' Returns a logical indicating which strings were matched
+#' Returns a logical indicating wether input strings were matched by one or more patterns
 #' @inheritParams  unglue
+#' @return a vector of logical.
 #' @export
 #' @examples
 #' sentences <- c("666 is [a number]", "foo is [a word]",
@@ -64,16 +65,16 @@ unglue_detect  <- function(
 #' @param col column containing the character vector to extract values from.
 #' @param remove wether to remove the column `col` once extraction is performed
 #' @param var for `unglue_vec()`, the numeric index or the name of the subpattern to extract from
-#'
+#' @return For `unglue()`a list of one row data frames, for `unglue_data` a
+#'   data frame, for `unglue_unnest` the data frame input with additional columns
+#'   built from extracted values, for `unglue_vec` an atomic vector.
 #' @export
 #'
 #' @examples
 #' # using an awample from ?glue::glue
-#' \dontrun{
-#' library(magrittr)
-#' library(glue)
-#' glued_data <- mtcars %>% glue_data("{rownames(.)} has {hp} hp")
-#' unglue_data(glued_data, "{rownames(.)} has {hp} hp")
+#' if(require(magrittr) && require(glue)) {
+#'   glued_data <- mtcars %>% glue_data("{rownames(.)} has {hp} hp")
+#'   unglue_data(glued_data, "{rownames(.)} has {hp} hp")
 #' }
 #'
 #' facts <- c("Antarctica is the largest desert in the world!",

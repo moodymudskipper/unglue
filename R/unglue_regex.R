@@ -12,6 +12,7 @@
 #' @param attributes wether to give group attributes to the output
 #'
 #' @export
+#' @return a character vector.
 #' @examples
 #' patterns <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 #' unglue_regex(patterns)
