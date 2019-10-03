@@ -25,7 +25,7 @@ bind_rows2 <- function(x){
   # rbind of several df without columns outputs 0 row df so need special case
   if(all(sapply(x,ncol)==0)) return(data.frame(row.names = seq_along(x)))
   # all names found in all data frames
-  nms <- unique(unlist(sapply(x, names)))
+  nms <- unique(unlist(c(sapply(x, names))))
   # add NA columns so we can rbind them
   x[] <- lapply(x,function(x) {x[nms[!nms %in% names(x)]] <- NA; x})
   do.call(rbind,x)
