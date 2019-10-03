@@ -141,8 +141,9 @@ unglue_data(c("black is black","black is dark"), "{color} is {color}")
 ```
 
 We can change this behavior by feeding a function to the `multiple` parameter,
-in that case this function will be applies on the matches.
+in that case this function will be applied on the matches.
 
 ```{r}
-unglue_data(c("black is black","black is dark"), "{color} is {color}", multiple = paste)
+unglue_data(c("System: Windows, Version: 10","System: Ubuntu, Version: 18"), 
+            "System: {OS}, Version: {OS}", multiple = paste)
 ```
