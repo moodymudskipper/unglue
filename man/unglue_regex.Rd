@@ -23,6 +23,9 @@ ouput regex}
 
 \item{attributes}{wether to give group attributes to the output}
 }
+\value{
+a character vector.
+}
 \description{
 Transforms a vector of patterns given in the unglue
 format to a vector of proper  regex (PCRE) patterns (so they can for instance

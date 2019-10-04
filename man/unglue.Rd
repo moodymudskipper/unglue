@@ -49,6 +49,11 @@ is supported if the package \code{rlang} is installed.}
 
 \item{remove}{wether to remove the column \code{col} once extraction is performed}
 }
+\value{
+For \code{unglue()}a list of one row data frames, for \code{unglue_data} a
+data frame, for \code{unglue_unnest} the data frame input with additional columns
+built from extracted values, for \code{unglue_vec} an atomic vector.
+}
 \description{
 The functions \code{unglue_data()}, \code{unglue()}, \code{unglue_vec()} and \code{unglue_unnest()}
 extract matched substrings using a syntax inspired from \code{glue::glue()}.
@@ -82,11 +87,9 @@ the syntax consistent with the latter.
 }
 \examples{
 # using an awample from ?glue::glue
-\dontrun{
-library(magrittr)
-library(glue)
-glued_data <- mtcars \%>\% glue_data("{rownames(.)} has {hp} hp")
-unglue_data(glued_data, "{rownames(.)} has {hp} hp")
+if(require(magrittr) && require(glue)) {
+  glued_data <- mtcars \%>\% glue_data("{rownames(.)} has {hp} hp")
+  unglue_data(glued_data, "{rownames(.)} has {hp} hp")
 }
 
 facts <- c("Antarctica is the largest desert in the world!",

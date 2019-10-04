@@ -29,8 +29,11 @@ same will match the same value. If a function is provided it will be fed
 the conflicting values as separate arguments. Formula notation
 is supported if the package \code{rlang} is installed.}
 }
+\value{
+a vector of logical.
+}
 \description{
-Returns a logical indicating which strings were matched
+Returns a logical indicating wether input strings were matched by one or more patterns
 }
 \examples{
 sentences <- c("666 is [a number]", "foo is [a word]",
