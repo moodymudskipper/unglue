@@ -59,7 +59,6 @@ facts <- c("Antarctica is the largest desert in the world!",
 "The smallest country in Europe is Vatican!",
 "Disneyland is the most visited place in Europe! Disneyland is in Paris!",
 "The largest island in the world is Green Land!")
-facts_df <- data.frame(id = 1:5, facts)
 
 patterns <- c("The {adjective} {place_type} in {bigger_place} is {place}!",
             "{place} is the {adjective} {place_type=[^ ]+} in {bigger_place}!{=.*}")
@@ -119,6 +118,7 @@ frame column. It is similar to `tidyr::extract()` in its syntax and
 efforts were made to make it as consistent as possible.
 
 ``` r
+facts_df <- data.frame(id = 1:5, facts)
 unglue_unnest(facts_df, facts, patterns)
 #>   id      place    adjective place_type bigger_place
 #> 1  1 Antarctica      largest     desert    the world
