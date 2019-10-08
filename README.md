@@ -32,7 +32,6 @@ remotes::install_github("moodymudskipper/unglue")
 library(unglue)
 library(glue)
 library(magrittr)
-library(utils)
 glued_data <- head(mtcars) %>% glue_data("{rownames(.)} has {hp} hp")
 glued_data
 #> Mazda RX4 has 110 hp
