@@ -177,7 +177,7 @@ subset(sentences, !unglue_detect(sentences, patterns2))
 
 `unglue_regex()` returns a character vector of regex patterns, all over
 functions are wrapped around it and it can be used to leverage the
-*unglue* in other functions.
+*unglue* syntax in other functions.
 
 ``` r
 unglue_regex(patterns)
