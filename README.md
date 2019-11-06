@@ -23,7 +23,7 @@ is supported if *rlang* is installed.
 ## Installation:
 
 ``` r
-remotes::install_github("moodymudskipper/unglue")
+install.packages("unglue")
 ```
 
 ### using an example from `?glue::glue` backwards
