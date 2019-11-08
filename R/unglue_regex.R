@@ -32,7 +32,10 @@ unglue_regex <- function(
   open1 <- regex_escape(open)
   close1 <- regex_escape(close)
   # define pattern which will help extract the content of our brackets
-  bracket_pattern <- paste0(open1,"(?>[^",open,close,"]|(?R))*", close1)
+  # we need to order the brackets in the character class to sort out the special
+  # case of the `]` bracket
+  open_close <- paste(c(open,close)[order(c(open,close) != "]")], collapse="")
+  bracket_pattern <- paste0(open1,"(?>[^",open_close,"]|(?R))*", close1)
   # matched will be a list containing for each pattern
   # the starting position of matches (in a vector) and the matches length (as attributes)
   matched <- gregexpr(bracket_pattern, patterns, perl = TRUE)

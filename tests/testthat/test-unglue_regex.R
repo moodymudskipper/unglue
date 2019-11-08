@@ -11,4 +11,7 @@ test_that("unglue_regex works", {
   expect_identical(
     unglue_regex("{x} and {y}", named_capture = TRUE),
     c(`{x} and {y}` = "^(?<x>.*?) and (?<y>.*?)$"))
+  expect_identical(
+    unglue_regex("[x] and [y]", open = "[", close = "]")[[1]],
+    unglue_regex("{x} and {y}")[[1]])
 })
