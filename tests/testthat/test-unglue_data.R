@@ -106,3 +106,14 @@ test_that("duplicated names are handled properly", {
     unglue_data(string, pattern, multiple = paste0, convert = TRUE),
     data.frame(n = c(NA, 2), letter = c(NA, "AA")))
 })
+
+
+
+test_that("multiple supports the formula notation",{
+  s <- c("random.0.0.word.1.0", "different.0.02.words.15.6", "different.0.1.words.4.2")
+  expect_equal(
+    unglue_data(s, "{=.*?}.{x}.{x}.{=.*?}.{=.*?}.{=.*?}", multiple = ~paste(..., sep = ".")),
+    data.frame(x= c("0.0", "0.02", "0.1")))
+})
+
+

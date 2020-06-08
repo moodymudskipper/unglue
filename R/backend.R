@@ -26,6 +26,12 @@ unglue_data0 <- function(
         if(is.null(multiple)) {
           cs <- setNames(as.list(cs), nms)
           return(as.data.frame(cs, stringsAsFactors = FALSE))
+        } else {
+          if(inherits(multiple, "formula")) {
+            if(!requireNamespace("rlang"))
+              stop("rlang package must be installed to use formula notation in `convert` argument of unglue functions")
+            multiple <- rlang::as_function(multiple)
+          }
         }
 
         # aggregate names
