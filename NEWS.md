@@ -17,3 +17,9 @@ using the relevant pattern.
 * *unglue* functions now have a `multiple` argument, when `multiple` is a 
  function instead of the default `NULL`, groups labelled by the same name are 
  combined.
+
+# unglue 0.0.2
+
+Bug fixes:
+
+* choosing `[` and `]` as opening and closing brackets now works as expected
