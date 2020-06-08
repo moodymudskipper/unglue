@@ -26,7 +26,7 @@ test_that("unglue_data features all work", {
     sapply(unglue_data("1 a", "{x} {y}", convert = type.convert), typeof),
     c(x = "integer", y = "integer"))
   expect_identical(
-    sapply(unglue_data("1 a", "{x} {y}", convert = ~type.convert(.)), typeof),
+    sapply(unglue_data("1 a", "{x} {y}", convert = ~type.convert(., as.is = FALSE)), typeof),
     c(x = "integer", y = "integer"))
   # omitting the lhs works
   expect_identical(
@@ -38,7 +38,7 @@ test_that("unglue_data features all work", {
 test_that("formula notation fails when rlang is not installed",{
   expect_error(
   with_mock(requireNamespace = function(...) FALSE,
-            unglue_data("1 a", "{x} {y}", convert = ~type.convert(.)),
+            unglue_data("1 a", "{x} {y}", convert = ~type.convert(., as.is = FALSE)),
             "rlang"))
 })
 
