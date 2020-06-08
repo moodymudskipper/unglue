@@ -7,17 +7,36 @@
 \alias{unglue_unnest}
 \title{unglue}
 \usage{
-unglue(x, patterns, open = "{", close = "}", convert = FALSE,
-  multiple = NULL)
+unglue(x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL)
 
-unglue_data(x, patterns, open = "{", close = "}", convert = FALSE,
-  multiple = NULL)
+unglue_data(
+  x,
+  patterns,
+  open = "{",
+  close = "}",
+  convert = FALSE,
+  multiple = NULL
+)
 
-unglue_vec(x, patterns, var = 1, open = "{", close = "}",
-  convert = FALSE, multiple = NULL)
+unglue_vec(
+  x,
+  patterns,
+  var = 1,
+  open = "{",
+  close = "}",
+  convert = FALSE,
+  multiple = NULL
+)
 
-unglue_unnest(data, col, patterns, open = "{", close = "}",
-  remove = TRUE, convert = FALSE)
+unglue_unnest(
+  data,
+  col,
+  patterns,
+  open = "{",
+  close = "}",
+  remove = TRUE,
+  convert = FALSE
+)
 }
 \arguments{
 \item{x}{a character vector to unglue.}
@@ -71,12 +90,12 @@ name.
 }
 
 To build the relevant regex pattern special characters will be escaped in the
-input pattern and the subpatterns will be replaced with \code{(.*?)} if in standard
+input pattern and the subpatterns will be replaced with \verb{(.*?)} if in standard
 \code{"{foo}"} form. An alternate regular expression can be provided after \code{=} so that
-\code{"{foo=\\d}"} will be translated into \code{"(\\d)"}.
+\code{"{foo=\\\\d}"} will be translated into \code{"(\\\\d)"}.
 
 Sometimes we might want to use regex to match a part of the text that won't
-be extracted, in these cases we just need to omit the name as in \code{"{=\\d}"}.
+be extracted, in these cases we just need to omit the name as in \code{"{=\\\\d}"}.
 
 \code{unglue_unnest()}'s name is a tribute to \code{tidyr::unnest()} because
 \code{unglue_unnest(data, col, patterns)} returns a similar output as

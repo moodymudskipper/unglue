@@ -4,8 +4,14 @@
 \alias{unglue_regex}
 \title{Converts unglue pattern to regular regex pattern}
 \usage{
-unglue_regex(patterns, open = "{", close = "}", use_multiple = FALSE,
-  named_capture = FALSE, attributes = FALSE)
+unglue_regex(
+  patterns,
+  open = "{",
+  close = "}",
+  use_multiple = FALSE,
+  named_capture = FALSE,
+  attributes = FALSE
+)
 }
 \arguments{
 \item{patterns}{a character vector or a list of character vectors, if a list,

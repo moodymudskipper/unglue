@@ -4,8 +4,14 @@
 \alias{unglue_detect}
 \title{Detect if strings are matched by a set of unglue patterns}
 \usage{
-unglue_detect(x, patterns, open = "{", close = "}", convert = FALSE,
-  multiple = NULL)
+unglue_detect(
+  x,
+  patterns,
+  open = "{",
+  close = "}",
+  convert = FALSE,
+  multiple = NULL
+)
 }
 \arguments{
 \item{x}{a character vector to unglue.}
