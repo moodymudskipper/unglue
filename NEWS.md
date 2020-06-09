@@ -18,7 +18,7 @@ using the relevant pattern.
  function instead of the default `NULL`, groups labelled by the same name are 
  combined.
 
-# unglue 0.0.2
+# unglue 0.1
 
 Bug fixes:
 

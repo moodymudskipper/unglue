@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# unglue
+
+# unglue <img src='man/figures/logo.png' align="right" height="139" />
+
 
 The package *unglue* features functions such as `unglue()`, `unglue_data()` and
 `unglue_unnest()` which provide in many cases a more readable alternative to
