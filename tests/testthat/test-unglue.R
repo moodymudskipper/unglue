@@ -8,3 +8,12 @@ test_that("unglue works", {
                     c("number", "what"),
                     character(0)))
 })
+
+test_that("unglue_sub works", {
+  expect_equal(
+    unglue_sub(
+      c("a and b", "foo or BAR"),
+      c("{x} and {y}", "{x} or {z}"),
+      list(x= "XXX", y = ~toupper(.), z = tolower)),
+    c("XXX and B",  "XXX or bar"))
+})
