@@ -38,6 +38,7 @@ unglue_unnest(
   close = "}",
   remove = TRUE,
   convert = FALSE,
+  multiple = NULL,
   na = NA_character_
 )
 }

@@ -134,13 +134,13 @@ unglue_vec  <- function(
 
 #' @rdname unglue
 #' @export
-unglue_unnest <- function(data, col, patterns, open = "{", close = "}",remove = TRUE, convert = FALSE, na = NA_character_){
+unglue_unnest <- function(data, col, patterns, open = "{", close = "}",remove = TRUE, convert = FALSE, multiple = NULL, na = NA_character_){
   # save the attributes of our data.frame, except for the names
   attr_bkp <- attributes(data)
   attr_bkp$names <- NULL
   # use unglue_data on the column whose raw name is fed to `var`
   col <- deparse(substitute(col))
-  ud  <- unglue_data(data[[col]], patterns, open = open, close = close, convert = convert, na = NA_character_)
+  ud  <- unglue_data(data[[col]], patterns, open = open, close = close, convert = convert, multiple = multiple, na = na)
   # remove this column if relevant
   if(remove) data[[col]] <- NULL
   # bind the source and built datasets together

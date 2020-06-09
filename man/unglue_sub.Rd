@@ -19,9 +19,6 @@ is installed), substring, or named list of such.}
 
 \item{close}{The closing delimiter.}
 }
-\value{
-
-}
 \description{
 substitute substrings using strings or replacement functions
 }
