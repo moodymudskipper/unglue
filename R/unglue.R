@@ -65,6 +65,7 @@ unglue_detect  <- function(
 #' @param col column containing the character vector to extract values from.
 #' @param remove wether to remove the column `col` once extraction is performed
 #' @param var for `unglue_vec()`, the numeric index or the name of the subpattern to extract from
+#' @param na string to use when there is no match
 #' @return For `unglue()`a list of one row data frames, for `unglue_data` a
 #'   data frame, for `unglue_unnest` the data frame input with additional columns
 #'   built from extracted values, for `unglue_vec` an atomic vector.
@@ -107,11 +108,12 @@ unglue  <- function(
 #' @export
 #'
 unglue_data  <- function(
-  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  x, patterns, open = "{", close = "}", convert = FALSE, multiple = NULL,
+  na = NA_character_){
   patterns_regex <- unglue_regex(
     patterns, open = open, close = close, use_multiple = !is.null(multiple),
     named_capture = FALSE, attributes = TRUE)
-  unglue_data0(x, patterns_regex, convert, multiple, output = "data.frame")
+  unglue_data0(x, patterns_regex, convert, multiple, output = "data.frame", na = na)
 }
 
 
@@ -119,26 +121,26 @@ unglue_data  <- function(
 #' @rdname unglue
 #' @export
 unglue_vec  <- function(
-  x, patterns, var = 1, open = "{", close = "}", convert = FALSE, multiple = NULL){
+  x, patterns, var = 1, open = "{", close = "}", convert = FALSE, multiple = NULL, na = NA_character_){
   patterns_regex <- unglue_regex(
     patterns, open = open, close = close, use_multiple = !is.null(multiple),
     named_capture = FALSE, attributes = TRUE)
   if((!is.character(var) && !is.numeric(var)) || length(var) != 1){
     stop("var should be a character or numeric of length 1")
   }
-  unglue_vec0(x, patterns_regex, var, convert = convert, multiple = multiple)
+  unglue_vec0(x, patterns_regex, var, convert = convert, multiple = multiple, na = na)
 }
 
 
 #' @rdname unglue
 #' @export
-unglue_unnest <- function(data, col, patterns, open = "{", close = "}",remove = TRUE, convert = FALSE){
+unglue_unnest <- function(data, col, patterns, open = "{", close = "}",remove = TRUE, convert = FALSE, na = NA_character_){
   # save the attributes of our data.frame, except for the names
   attr_bkp <- attributes(data)
   attr_bkp$names <- NULL
   # use unglue_data on the column whose raw name is fed to `var`
   col <- deparse(substitute(col))
-  ud  <- unglue_data(data[[col]], patterns, open = open, close = close, convert = convert)
+  ud  <- unglue_data(data[[col]], patterns, open = open, close = close, convert = convert, na = NA_character_)
   # remove this column if relevant
   if(remove) data[[col]] <- NULL
   # bind the source and built datasets together

@@ -34,7 +34,7 @@ a character vector.
 }
 \description{
 Transforms a vector of patterns given in the unglue
-format to a vector of proper  regex (PCRE) patterns (so they can for instance
+format to a vector of proper regex (PCRE) patterns (so they can for instance
 be used with functions from other packages).
 }
 \examples{

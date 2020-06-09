@@ -116,4 +116,3 @@ test_that("multiple supports the formula notation",{
     data.frame(x= c("0.0", "0.02", "0.1")))
 })
 
-

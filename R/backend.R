@@ -1,13 +1,14 @@
 unglue_data0 <- function(
   x, patterns_regex, convert = FALSE, multiple = NULL,
-  output = "data.frame"){
+  output = "data.frame", na = NA_character_){
+  stopifnot(is.character(na) && length(na) == 1)
 
   # get numeric index of relevant pattern for each element of x
   pattern_indices <- pattern_match(x, patterns_regex)
   if (output == "logical") return(!is.na(pattern_indices))
 
   # initiate a list of results
-  res <- as.list(rep.int(NA,length(x)))
+  res <- as.list(rep.int(NA_character_,length(x)))
 
   if(inherits(multiple, "formula")) {
     if(!requireNamespace("rlang"))
@@ -38,6 +39,9 @@ unglue_data0 <- function(
   # bind everything
   res <- bind_rows2(res)
   rownames(res) <- NULL
+
+  # replace NAs
+  res[is.na(res)] <- na
 
   # convert if relevant
   if (isTRUE(convert)) {
@@ -102,7 +106,8 @@ get_ith_pattern_res <- function(x_subset, matched, groups, nms, multiple){
 }
 
 
-unglue_vec0 <- function(x, patterns_regex, var, convert, multiple){
+unglue_vec0 <- function(x, patterns_regex, var, convert, multiple, na = NA_character_){
+  stopifnot(is.character(na) && length(na) == 1)
   groups <- attr(patterns_regex, "groups")
   nms <- lapply(groups, names)
   # assign a pattern to each element
@@ -115,7 +120,7 @@ unglue_vec0 <- function(x, patterns_regex, var, convert, multiple){
   }
 
   # initiate a list of results
-  res <- rep.int(NA_character_, length(x))
+  res <- rep.int(na, length(x))
   if(is.numeric(var)){
     for(i in seq_along(patterns_regex)){
       groups  <- attr(patterns_regex, "groups")[[i]]

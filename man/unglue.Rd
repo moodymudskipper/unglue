@@ -15,7 +15,8 @@ unglue_data(
   open = "{",
   close = "}",
   convert = FALSE,
-  multiple = NULL
+  multiple = NULL,
+  na = NA_character_
 )
 
 unglue_vec(
@@ -25,7 +26,8 @@ unglue_vec(
   open = "{",
   close = "}",
   convert = FALSE,
-  multiple = NULL
+  multiple = NULL,
+  na = NA_character_
 )
 
 unglue_unnest(
@@ -35,7 +37,8 @@ unglue_unnest(
   open = "{",
   close = "}",
   remove = TRUE,
-  convert = FALSE
+  convert = FALSE,
+  na = NA_character_
 )
 }
 \arguments{
@@ -59,6 +62,8 @@ named the same, by default no function is used and subpatterns named the
 same will match the same value. If a function is provided it will be fed
 the conflicting values as separate arguments. Formula notation
 is supported if the package \code{rlang} is installed.}
+
+\item{na}{string to use when there is no match}
 
 \item{var}{for \code{unglue_vec()}, the numeric index or the name of the subpattern to extract from}
 
