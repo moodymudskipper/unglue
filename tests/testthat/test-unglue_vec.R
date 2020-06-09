@@ -23,6 +23,7 @@ test_that("unglue_vec works", {
   expect_error(unglue_vec(sentences, patterns, c("number","word")))
   expect_equal(unglue_vec(sentences, patterns, 3),
                rep(NA_character_,4))
-
-  debugonce(unglue_vec0)
+  expect_equal(
+    unglue_vec(s, "{=.*?}.{x}.{x}.{=.*?}.{=.*?}.{=.*?}", multiple = ~paste(..., sep = ".")),
+    c("0.0", "0.02", "0.1"))
 })

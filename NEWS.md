@@ -23,3 +23,5 @@ using the relevant pattern.
 Bug fixes:
 
 * choosing `[` and `]` as opening and closing brackets now works as expected
+* `unglue_vec()` supports `multiple` argument
+

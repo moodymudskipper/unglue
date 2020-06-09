@@ -126,7 +126,7 @@ unglue_vec  <- function(
   if((!is.character(var) && !is.numeric(var)) || length(var) != 1){
     stop("var should be a character or numeric of length 1")
   }
-  unglue_vec0(x, patterns_regex, var, convert = convert)
+  unglue_vec0(x, patterns_regex, var, convert = convert, multiple = multiple)
 }
 
 
@@ -145,7 +145,7 @@ unglue_unnest <- function(data, col, patterns, open = "{", close = "}",remove = 
   res <- cbind(data, ud)
   # make unique names in case of duplicated
   names(res) <- make.unique(names(res))
-  # restore the attibutes
+  # restore the attributes
   attributes(res) <- c(attr_bkp, list(names = names(res)))
   res
 }
