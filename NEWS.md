@@ -22,6 +22,12 @@ using the relevant pattern.
 
 Bug fixes:
 
-* choosing `[` and `]` as opening and closing brackets now works as expected
-* `unglue_vec()` supports `multiple` argument
+* Choosing `[` and `]` as opening and closing brackets now works as expected
+
+Features :
+
+* Support of `multiple` argument for all relevant functions was fixed
+* An `na` argument can be used to give a different value than `NA` to unmatched
+substrings in `unglue_data()`, `unglue_unnest()` and `unglue_vec()`
+* A new function `unglue_sub()` allows convenient substring substitution
 
