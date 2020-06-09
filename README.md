@@ -127,18 +127,12 @@ unglue_unnest(facts_df, facts, patterns)
 #> 4  4 Disneyland most visited      place       Europe
 #> 5  5 Green Land      largest     island    the world
 unglue_unnest(facts_df, facts, patterns, remove = FALSE)
-#>   id
-#> 1  1
-#> 2  2
-#> 3  3
-#> 4  4
-#> 5  5
-#>                                                                     facts
-#> 1                          Antarctica is the largest desert in the world!
-#> 2                                The largest country in Europe is Russia!
-#> 3                              The smallest country in Europe is Vatican!
-#> 4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
-#> 5                          The largest island in the world is Green Land!
+#>   id                                                                   facts
+#> 1  1                          Antarctica is the largest desert in the world!
+#> 2  2                                The largest country in Europe is Russia!
+#> 3  3                              The smallest country in Europe is Vatican!
+#> 4  4 Disneyland is the most visited place in Europe! Disneyland is in Paris!
+#> 5  5                          The largest island in the world is Green Land!
 #>        place    adjective place_type bigger_place
 #> 1 Antarctica      largest     desert    the world
 #> 2     Russia      largest    country       Europe
@@ -205,6 +199,19 @@ unglue_regex(patterns, attributes = TRUE)
 #>            1            2            3            4
 ```
 
+### `unglue_sub()`
+
+`unglue_sub()` substitute substrings using strings or replacement
+functions
+
+``` r
+unglue_sub(
+  c("a and b", "foo or BAR"),
+  c("{x} and {y}", "{x} or {z}"),
+  list(x= "XXX", y = toupper, z = ~tolower(.)))
+#> [1] "XXX and B"  "XXX or bar"
+```
+
 ### duplicated labels
 
 We can ensure that a pattern is repeated by repeating its label
@@ -217,11 +224,12 @@ unglue_data(c("black is black","black is dark"), "{color} is {color}")
 ```
 
 We can change this behavior by feeding a function to the `multiple`
-parameter, in that case this function will be applies on the matches.
+parameter, in that case this function will be applied on the matches.
 
 ``` r
-unglue_data(c("black is black","black is dark"), "{color} is {color}", multiple = paste)
-#>         color
-#> 1 black black
-#> 2  black dark
+unglue_data(c("System: Windows, Version: 10","System: Ubuntu, Version: 18"), 
+            "System: {OS}, Version: {OS}", multiple = paste)
+#>           OS
+#> 1 Windows 10
+#> 2  Ubuntu 18
 ```

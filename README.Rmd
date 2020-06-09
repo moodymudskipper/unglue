@@ -132,6 +132,18 @@ unglue_regex(patterns, named_capture = TRUE)
 unglue_regex(patterns, attributes = TRUE)
 ```
 
+### `unglue_sub()`
+
+`unglue_sub()` substitute substrings using strings or replacement functions
+
+```{r}
+unglue_sub(
+  c("a and b", "foo or BAR"),
+  c("{x} and {y}", "{x} or {z}"),
+  list(x= "XXX", y = toupper, z = ~tolower(.)))
+```
+
+
 ### duplicated labels
 
 We can ensure that a pattern is repeated by repeating its label
