@@ -8,11 +8,12 @@ regex_escape <- function(string,n = 1) {
 }
 
 pattern_match <- function(x,patterns){
+  # build a boolean matrix with patterns as columns and x elements as rows
   # lapply + do.call + cbind guarantee that we get a matrix output
   m <- do.call(cbind,lapply(patterns, grepl, x))
   # get indices of 1st relevant pattern
   i <- apply(m, 1, which.max)
-  # but which.max returns 1 something on a vector of FALSE so need to adjust
+  # but which.max returns 1 on a vector of FALSE so need to adjust
   i[!rowSums(m)] <- NA
   # return pattern indices
   i
