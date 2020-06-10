@@ -92,7 +92,7 @@ as `readr::type_convert`, or to a formula is *rlang* is installed.
 ### `unglue_unnest()`
 
 `unglue_unnest()` is named as a tribute to `tidyr::unnest()` as it's equivalent
-to using sucessively `unglue()` and `unnest()` on a data frame column. It is
+to using successively `unglue()` and `unnest()` on a data frame column. It is
 similar to `tidyr::extract()` in its syntax and efforts were made to make it as
 consistent as possible.
 

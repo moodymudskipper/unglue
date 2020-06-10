@@ -5,11 +5,11 @@
 #' be used with functions from other packages).
 #'
 #' @inheritParams  unglue
-#' @param use_multiple wether we should consider that duplicate labels can match
+#' @param use_multiple whether we should consider that duplicate labels can match
 #'   different substrings.
-#' @param named_capture wether to incorporate the names of the groups in the
-#'   ouput regex
-#' @param attributes wether to give group attributes to the output
+#' @param named_capture whether to incorporate the names of the groups in the
+#'   output regex
+#' @param attributes whether to give group attributes to the output
 #'
 #' @export
 #' @return a character vector.

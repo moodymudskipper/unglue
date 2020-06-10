@@ -3,6 +3,9 @@
 
 [![Travis build
 status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
+[![Codecov test
+coverage](https://codecov.io/gh/moodymudskipper/unglue/branch/master/graph/badge.svg)](https://codecov.io/gh/moodymudskipper/unglue?branch=master)
+<!-- badges: end -->
 
 # unglue <img src='man/figures/logo.png' align="right" height="139" />
 
@@ -112,7 +115,7 @@ conversion function such as `readr::type_convert`, or to a formula is
 ### `unglue_unnest()`
 
 `unglue_unnest()` is named as a tribute to `tidyr::unnest()` as it’s
-equivalent to using sucessively `unglue()` and `unnest()` on a data
+equivalent to using successively `unglue()` and `unnest()` on a data
 frame column. It is similar to `tidyr::extract()` in its syntax and
 efforts were made to make it as consistent as possible.
 

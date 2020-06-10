@@ -72,7 +72,7 @@ is supported if the package \code{rlang} is installed.}
 
 \item{col}{column containing the character vector to extract values from.}
 
-\item{remove}{wether to remove the column \code{col} once extraction is performed}
+\item{remove}{whether to remove the column \code{col} once extraction is performed}
 }
 \value{
 For \code{unglue()}a list of one row data frames, for \code{unglue_data} a
@@ -90,7 +90,7 @@ Depending on the task you might want:
 \item \code{unglue_data()} to return a data frame from a character vector,
 just as \code{glue::glue_data()} does in reverse
 \item \code{unglue()} to return a list of data frames containing the matches
-\item \code{unglue_vec()} to extract one value by element of \code{x}, chosen by indice or by
+\item \code{unglue_vec()} to extract one value by element of \code{x}, chosen by index or by
 name.
 \item \code{unglue_unnest()} to extract value from a column of a data frame to new columns
 }

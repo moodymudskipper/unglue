@@ -39,7 +39,7 @@ is supported if the package \code{rlang} is installed.}
 a vector of logical.
 }
 \description{
-Returns a logical indicating wether input strings were matched by one or more patterns
+Returns a logical indicating whether input strings were matched by one or more patterns
 }
 \examples{
 sentences <- c("666 is [a number]", "foo is [a word]",

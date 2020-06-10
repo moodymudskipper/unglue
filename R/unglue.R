@@ -1,6 +1,6 @@
 #' Detect if strings are matched by a set of unglue patterns
 #'
-#' Returns a logical indicating wether input strings were matched by one or more patterns
+#' Returns a logical indicating whether input strings were matched by one or more patterns
 #' @inheritParams  unglue
 #' @return a vector of logical.
 #' @export
@@ -27,7 +27,7 @@ unglue_detect  <- function(
 #' * `unglue_data()` to return a data frame from a character vector,
 #'   just as `glue::glue_data()` does in reverse
 #' * `unglue()` to return a list of data frames containing the matches
-#' * `unglue_vec()` to extract one value by element of `x`, chosen by indice or by
+#' * `unglue_vec()` to extract one value by element of `x`, chosen by index or by
 #'   name.
 #' * `unglue_unnest()` to extract value from a column of a data frame to new columns
 #'
@@ -63,7 +63,7 @@ unglue_detect  <- function(
 #'   the conflicting values as separate arguments. Formula notation
 #'   is supported if the package `rlang` is installed.
 #' @param col column containing the character vector to extract values from.
-#' @param remove wether to remove the column `col` once extraction is performed
+#' @param remove whether to remove the column `col` once extraction is performed
 #' @param var for `unglue_vec()`, the numeric index or the name of the subpattern to extract from
 #' @param na string to use when there is no match
 #' @return For `unglue()`a list of one row data frames, for `unglue_data` a

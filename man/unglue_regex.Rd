@@ -21,13 +21,13 @@ items will be pasted using an empty separator (\code{""}).}
 
 \item{close}{The closing delimiter.}
 
-\item{use_multiple}{wether we should consider that duplicate labels can match
+\item{use_multiple}{whether we should consider that duplicate labels can match
 different substrings.}
 
-\item{named_capture}{wether to incorporate the names of the groups in the
-ouput regex}
+\item{named_capture}{whether to incorporate the names of the groups in the
+output regex}
 
-\item{attributes}{wether to give group attributes to the output}
+\item{attributes}{whether to give group attributes to the output}
 }
 \value{
 a character vector.
