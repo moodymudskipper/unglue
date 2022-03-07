@@ -15,6 +15,6 @@ Suggests:
     knitr,
     rmarkdown,
     magrittr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
