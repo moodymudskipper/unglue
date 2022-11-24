@@ -23,9 +23,6 @@ test_that("unglue_data features all work", {
     sapply(unglue_data("1 a", "{x} {y}", convert = FALSE), typeof),
     c(x = "character", y = "character"))
   expect_identical(
-    sapply(unglue_data("1 a", "{x} {y}", convert = type.convert), typeof),
-    c(x = "integer", y = "integer"))
-  expect_identical(
     sapply(unglue_data("1 a", "{x} {y}", convert = ~type.convert(., as.is = FALSE)), typeof),
     c(x = "integer", y = "integer"))
   # omitting the lhs works

@@ -12,7 +12,7 @@ test_that("unglue_vec works", {
                c("666", NA, "42", NA))
   expect_equal(unglue_vec(sentences, patterns, "number", convert = TRUE),
                c(666, NA, 42, NA))
-  expect_equal(unglue_vec(sentences, patterns, "number", convert = type.convert),
+  expect_equal(unglue_vec(sentences, patterns, "number", convert =  ~type.convert(., as.is = TRUE)),
                c(666, NA, 42, NA))
   expect_equal(unglue_vec(sentences, patterns, "number", convert = ~type.convert(., as.is = FALSE)),
                c(666, NA, 42, NA))
