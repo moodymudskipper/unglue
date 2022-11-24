@@ -1,8 +1,6 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.org/moodymudskipper/unglue.svg?branch=master)](https://travis-ci.org/moodymudskipper/unglue)
 [![Codecov test
 coverage](https://codecov.io/gh/moodymudskipper/unglue/branch/master/graph/badge.svg)](https://codecov.io/gh/moodymudskipper/unglue?branch=master)
 <!-- badges: end -->
