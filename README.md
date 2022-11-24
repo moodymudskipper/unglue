@@ -22,6 +22,9 @@ is supported if *rlang* is installed.
 ## Installation:
 
 ``` r
+# CRAN version:
+install.packages("unglue")
+# Development version:
 remotes::install_github("moodymudskipper/unglue")
 ```
 
