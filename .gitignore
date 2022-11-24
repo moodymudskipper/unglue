@@ -4,3 +4,4 @@ exclude
 .Rhistory
 .RData
 inst/doc
+docs
