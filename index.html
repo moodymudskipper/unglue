@@ -140,13 +140,13 @@
 <span><span class="co">#&gt; 2     NA     a word  foo</span></span>
 <span><span class="co">#&gt; 3     42 the answer &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 4     NA       &lt;NA&gt; &lt;NA&gt;</span></span></code></pre></div>
-<p><code>convert = TRUE</code> triggers the use of <code><a href="https://rdrr.io/r/utils/type.convert.html" class="external-link">utils::type.convert</a></code> with parameter <code>as.is = TRUE</code>. We can also set <code>convert</code> to another conversion function such as <code>readr::type_convert</code>, or to a formula is <em>rlang</em> is installed.</p>
+<p><code>convert = TRUE</code> triggers the use of <code><a href="https://rdrr.io/r/utils/type.convert.html" class="external-link">utils::type.convert</a></code> with parameter <code>as.is = TRUE</code>. We can also set <code>convert</code> to another conversion function such as <code><a href="https://readr.tidyverse.org/reference/type_convert.html" class="external-link">readr::type_convert</a></code>, or to a formula is <em>rlang</em> is installed.</p>
 </div>
 <div class="section level3">
 <h3 id="unglue_unnest">
 <code>unglue_unnest()</code><a class="anchor" aria-label="anchor" href="#unglue_unnest"></a>
 </h3>
-<p><code><a href="reference/unglue.html">unglue_unnest()</a></code> is named as a tribute to <code>tidyr::unnest()</code> as it’s equivalent to using successively <code><a href="reference/unglue.html">unglue()</a></code> and <code>unnest()</code> on a data frame column. It is similar to <code>tidyr::extract()</code> in its syntax and efforts were made to make it as consistent as possible.</p>
+<p><code><a href="reference/unglue.html">unglue_unnest()</a></code> is named as a tribute to <code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest()</a></code> as it’s equivalent to using successively <code><a href="reference/unglue.html">unglue()</a></code> and <code>unnest()</code> on a data frame column. It is similar to <code><a href="https://tidyr.tidyverse.org/reference/extract.html" class="external-link">tidyr::extract()</a></code> in its syntax and efforts were made to make it as consistent as possible.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/unglue.html">unglue_unnest</a></span><span class="op">(</span><span class="va">facts_df</span>, <span class="va">facts</span>, <span class="va">patterns</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id      place    adjective place_type bigger_place</span></span>
@@ -299,7 +299,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer>
