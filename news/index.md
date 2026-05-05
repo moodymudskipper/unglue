@@ -6,10 +6,8 @@ CRAN release: 2019-10-07
 
 - Added a `NEWS.md` file to track changes to the package.
 - Changed names, order, and default values of arguments to be consistent
-  with
-  [`tidyr::extract()`](https://tidyr.tidyverse.org/reference/extract.html)
-  as both functions had similar syntax and functionality and differences
-  might create confusion.
+  with `tidyr::extract()` as both functions had similar syntax and
+  functionality and differences might create confusion.
 - A new function [`unglue_regex()`](../reference/unglue_regex.md) can
   translate unglue patterns into proper regex.
 - A new function [`unglue_vec()`](../reference/unglue.md) extracts a

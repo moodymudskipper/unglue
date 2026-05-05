@@ -17,6 +17,7 @@ is supported if *rlang* is installed.
 ## Installation:
 
 ``` r
+
 # CRAN version:
 install.packages("unglue")
 # Development version:
@@ -26,6 +27,7 @@ remotes::install_github("moodymudskipper/unglue")
 ### using an example from `?glue::glue` backwards
 
 ``` r
+
 library(unglue)
 library(glue)
 library(magrittr)
@@ -51,6 +53,7 @@ unglue_data(glued_data, "{rownames(.)} has {hp} hp")
 ### use several patterns, the first that matches will be used
 
 ``` r
+
 facts <- c("Antarctica is the largest desert in the world!",
 "The largest country in Europe is Russia!",
 "The smallest country in Europe is Vatican!",
@@ -79,6 +82,7 @@ shorthand for `"{foo=.*?}"`.
 Special characters outside of the curly braces should not be escaped.
 
 ``` r
+
 sentences <- c("666 is [a number]", "foo is [a word]", "42 is [the answer]", "Area 51 is [unmatched]")
 patterns2 <- c("{number=\\d+} is [{what}]", "{word=\\D+} is [{what}]")
 unglue_data(sentences, patterns2)
@@ -95,6 +99,7 @@ In order to convert types automatically we can set `convert = TRUE`, in
 the example above the column `number` will be converted to numeric.
 
 ``` r
+
 unglue_data(sentences, patterns2, convert = TRUE)
 #>   number       what word
 #> 1    666   a number <NA>
@@ -106,22 +111,19 @@ unglue_data(sentences, patterns2, convert = TRUE)
 `convert = TRUE` triggers the use of
 [`utils::type.convert`](https://rdrr.io/r/utils/type.convert.html) with
 parameter `as.is = TRUE`. We can also set `convert` to another
-conversion function such as
-[`readr::type_convert`](https://readr.tidyverse.org/reference/type_convert.html),
-or to a formula is *rlang* is installed.
+conversion function such as `readr::type_convert`, or to a formula is
+*rlang* is installed.
 
 ### `unglue_unnest()`
 
 [`unglue_unnest()`](reference/unglue.md) is named as a tribute to
-[`tidyr::unnest()`](https://tidyr.tidyverse.org/reference/unnest.html)
-as it’s equivalent to using successively
+`tidyr::unnest()` as it’s equivalent to using successively
 [`unglue()`](reference/unglue.md) and `unnest()` on a data frame column.
-It is similar to
-[`tidyr::extract()`](https://tidyr.tidyverse.org/reference/extract.html)
-in its syntax and efforts were made to make it as consistent as
-possible.
+It is similar to `tidyr::extract()` in its syntax and efforts were made
+to make it as consistent as possible.
 
 ``` r
+
 unglue_unnest(facts_df, facts, patterns)
 #>   id      place    adjective place_type bigger_place
 #> 1  1 Antarctica      largest     desert    the world
@@ -152,6 +154,7 @@ While [`unglue()`](reference/unglue.md) returns a list of data frames,
 extracted match will be chosen by name or by position.
 
 ``` r
+
 unglue_vec(sentences, patterns2, "number")
 #> [1] "666" NA    "42"  NA
 unglue_vec(sentences, patterns2, 1)
@@ -165,6 +168,7 @@ vector, it’s convenient to check that the input was matched by a
 pattern, or to subset the input to take a look at unmatched elements.
 
 ``` r
+
 unglue_detect(sentences, patterns2)
 #> [1]  TRUE  TRUE  TRUE FALSE
 subset(sentences, !unglue_detect(sentences, patterns2))
@@ -178,6 +182,7 @@ of regex patterns, all over functions are wrapped around it and it can
 be used to leverage the *unglue* in other functions.
 
 ``` r
+
 unglue_regex(patterns)
 #>            The {adjective} {place_type} in {bigger_place} is {place}! 
 #>                                "^The (.*?) (.*?) in (.*?) is (.*?)!$" 
@@ -209,6 +214,7 @@ unglue_regex(patterns, attributes = TRUE)
 strings or replacement functions
 
 ``` r
+
 unglue_sub(
   c("a and b", "foo or BAR"),
   c("{x} and {y}", "{x} or {z}"),
@@ -221,6 +227,7 @@ unglue_sub(
 We can ensure that a pattern is repeated by repeating its label
 
 ``` r
+
 unglue_data(c("black is black","black is dark"), "{color} is {color}")
 #>   color
 #> 1 black
@@ -231,6 +238,7 @@ We can change this behavior by feeding a function to the `multiple`
 parameter, in that case this function will be applied on the matches.
 
 ``` r
+
 unglue_data(c("System: Windows, Version: 10","System: Ubuntu, Version: 18"), 
             "System: {OS}, Version: {OS}", multiple = paste)
 #>           OS

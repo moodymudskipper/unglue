@@ -68,11 +68,9 @@ unglue_unnest(
   If `TRUE`, will convert columns of output using
   [`utils::type.convert()`](https://rdrr.io/r/utils/type.convert.html)
   with parameter `as.is = TRUE`, alternatively, can be a converting
-  function, such as
-  [`readr::type_convert`](https://readr.tidyverse.org/reference/type_convert.html).
-  Formula notation is supported if the package `rlang` is installed, so
-  things like `convert = ~type_convert(., numerals = "warn.loss")` are
-  possible.
+  function, such as `readr::type_convert`. Formula notation is supported
+  if the package `rlang` is installed, so things like
+  `convert = ~type_convert(., numerals = "warn.loss")` are possible.
 
 - multiple:
 
@@ -136,13 +134,12 @@ Sometimes we might want to use regex to match a part of the text that
 won't be extracted, in these cases we just need to omit the name as in
 `"{=\\d}"`.
 
-`unglue_unnest()`'s name is a tribute to
-[`tidyr::unnest()`](https://tidyr.tidyverse.org/reference/unnest.html)
-because `unglue_unnest(data, col, patterns)` returns a similar output as
+`unglue_unnest()`'s name is a tribute to `tidyr::unnest()` because
+`unglue_unnest(data, col, patterns)` returns a similar output as
 `dplyr::mutate(data, unglued = unglue(col, patterns)) %>% tidyr::unnest()`
 (without requiring any extra package). It is also very close to
-[`tidyr::extract()`](https://tidyr.tidyverse.org/reference/extract.html)
-and efforts were made to make the syntax consistent with the latter.
+`tidyr::extract()` and efforts were made to make the syntax consistent
+with the latter.
 
 ## Examples
 

@@ -40,11 +40,9 @@ unglue_detect(
   If `TRUE`, will convert columns of output using
   [`utils::type.convert()`](https://rdrr.io/r/utils/type.convert.html)
   with parameter `as.is = TRUE`, alternatively, can be a converting
-  function, such as
-  [`readr::type_convert`](https://readr.tidyverse.org/reference/type_convert.html).
-  Formula notation is supported if the package `rlang` is installed, so
-  things like `convert = ~type_convert(., numerals = "warn.loss")` are
-  possible.
+  function, such as `readr::type_convert`. Formula notation is supported
+  if the package `rlang` is installed, so things like
+  `convert = ~type_convert(., numerals = "warn.loss")` are possible.
 
 - multiple:
 
