@@ -5,3 +5,4 @@ exclude
 .RData
 inst/doc
 docs
+.ccache/
